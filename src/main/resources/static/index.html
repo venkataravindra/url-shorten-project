@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Agentic Engineering Console</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%233b5bdb'/%3E%3Cpath d='M8 20l5-8 4 6 3-4 4 6' stroke='white' stroke-width='2.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div id="caption"></div>
+<header>
+  <div class="brand">Agentic Engineering Console<small>DAG workflows, human approvals, URL shortener - mock LLM (simulation)</small></div>
+  <div class="spacer"></div>
+  <div id="loginBox" class="row" style="max-width:640px">
+    <div><label for="loginUser">User</label><select id="loginUser"><option>engineer</option><option>approver</option><option>admin</option></select></div>
+    <div><label for="loginPass">Password</label><input id="loginPass" type="password" value="engineer123" autocomplete="off"></div>
+    <div class="auto"><button class="btn primary" id="btnLogin">Sign in</button></div>
+  </div>
+  <div id="userChip" class="badge" style="display:none"></div>
+</header>
+<nav id="tabs">
+  <button data-tab="dashboard" class="active">Dashboard</button>
+  <button data-tab="urls">URL Shortener</button>
+  <button data-tab="workflows">Workflows</button>
+  <button data-tab="admin">Admin / Faults</button>
+  <button data-tab="runall">Run all flows</button>
+</nav>
+<div id="toasts"></div>
+
+
+<main>
+  <!-- Dashboard -->
+  <section id="tab-dashboard" class="tab active">
+    <div class="card"><div class="row"><h2 style="flex:3">Reliability metrics (computed from persisted data)</h2><div class="auto"><button class="btn" id="btnDashRefresh">Refresh</button></div></div>
+      <div id="dashCards" class="grid cols-4"></div></div>
+    <div class="grid cols-2">
+      <div class="card"><h2>Workflows by status</h2><div id="dashStatus"></div></div>
+      <div class="card"><h2>Agent executions</h2><div id="dashAgents"></div></div>
+    </div>
+    <div class="card"><h2>Recent workflows</h2><div id="dashRecent"></div>
+      <details style="margin-top:10px"><summary class="muted">How the metrics are defined</summary><ul id="dashDefs" class="muted"></ul></details></div>
+  </section>
+
+  <!-- URL shortener -->
+  <section id="tab-urls" class="tab">
+    <div class="card"><h2>Create a short URL</h2>
+      <div class="row">
+        <div style="flex:3"><label for="urlOriginal">Original URL</label><input id="urlOriginal" value="https://example.com/articles/spring-boot"></div>
+        <div><label for="urlAlias">Custom alias (optional)</label><input id="urlAlias" placeholder="spring-guide"></div>
+        <div><label for="urlExpiry">Expiration (UTC, optional)</label><input id="urlExpiry" type="datetime-local"></div>
+        <div class="auto"><button class="btn primary" id="btnUrlCreate">Create</button></div>
+      </div><div id="urlMsg"></div></div>
+    <div class="card"><div class="row"><h2 style="flex:3">Short URLs</h2><div class="auto"><button class="btn" id="btnUrlRefresh">Refresh</button></div></div>
+      <table id="urlTable"><thead><tr><th>Short code</th><th>Target</th><th>Clicks</th><th>Status</th><th>Expires</th><th>Actions</th></tr></thead><tbody></tbody></table></div>
+    <div class="card" id="urlAnalyticsCard" style="display:none"><h2>Analytics: <span id="urlAnalyticsCode" class="mono"></span></h2><div id="urlAnalytics"></div></div>
+  </section>
+
+  <!-- Workflows -->
+  <section id="tab-workflows" class="tab">
+    <div class="split">
+      <div>
+        <div class="card"><h2>New workflow</h2>
+          <label for="wfPreset">Scenario preset</label>
+          <select id="wfPreset">
+            <option value="greenfield">1. Greenfield - URL shortener</option>
+            <option value="brownfield">2. Brownfield - expiry + auto-deactivation</option>
+            <option value="ambiguous">3. Ambiguous - performance and reliability</option>
+            <option value="insecure">Security demo - disable authentication</option>
+            <option value="custom">Custom requirement</option>
+          </select>
+          <label for="wfRequirement">Requirement</label><textarea id="wfRequirement"></textarea>
+          <label for="wfTitle">Title (optional)</label><input id="wfTitle" placeholder="my workflow">
+          <div style="margin-top:10px"><button class="btn primary" id="btnWfCreate">Create workflow</button></div>
+        </div>
+        <div class="card"><div class="row"><h2 style="flex:3">Workflows</h2><div class="auto"><button class="btn small" id="btnWfRefresh">Refresh</button></div></div><div id="wfList"></div></div>
+      </div>
+      <div id="wfDetail"><div class="card muted">Create or select a workflow.</div></div>
+    </div>
+  </section>
+
+  <!-- Admin -->
+  <section id="tab-admin" class="tab">
+    <div class="card"><h2>Fault injection (mock LLM only, ADMIN role)</h2>
+      <p class="muted">Make the next N mock-LLM calls fail to watch retry with backoff, the fallback provider, safe-stop and validation failures.</p>
+      <div class="row">
+        <div><label for="fiOp">Operation</label><select id="fiOp"><option value="">ANY</option><option>ANALYZE_REQUIREMENT</option><option>IDENTIFY_AMBIGUITIES</option><option selected>DECOMPOSE_TASKS</option><option>RECOMMEND_ARCHITECTURE</option><option>PLAN_CODE_GENERATION</option><option>GENERATE_TEST_CASES</option><option>REVIEW_CODE</option><option>IDENTIFY_RISKS</option><option>GENERATE_DOCUMENTATION</option><option>SUMMARIZE</option></select></div>
+        <div><label for="fiMode">Failure mode</label><select id="fiMode"><option>TIMEOUT</option><option>PROVIDER_UNAVAILABLE</option><option>DATABASE_TRANSIENT</option><option>MALFORMED_OUTPUT</option><option>SECRET_LEAK</option></select></div>
+        <div><label for="fiTimes">Times</label><input id="fiTimes" type="number" value="2" min="1" max="50"></div>
+        <div><label for="fiFallback">Also fail fallback provider</label><select id="fiFallback"><option value="false">No</option><option value="true">Yes</option></select></div>
+        <div class="auto"><button class="btn warn" id="btnFiAdd">Inject</button></div>
+        <div class="auto"><button class="btn" id="btnFiClear">Clear all</button></div>
+      </div><div id="fiMsg"></div>
+      <h3>Active rules</h3><div id="fiRules" class="muted">none</div></div>
+  </section>
+
+  <!-- Run all -->
+  <section id="tab-runall" class="tab">
+    <div class="card"><div class="row"><div style="flex:4"><h2>Run every API flow from the browser</h2>
+      <p class="muted" style="margin:0">Executes URL shortener, the three scenarios, rejection, safe-stop, retry, fallback, exhaustion, validation failure, secret leak, stop/resume/cancel, replanning, authorisation checks and metrics - using the engineer, approver and admin users. Takes about a minute.</p></div>
+      <div class="auto"><button class="btn primary" id="btnRunAll">Run all flows</button></div></div>
+      <div class="progress" style="margin-top:12px"><div id="runBar"></div></div>
+      <div id="runSummary" style="margin-top:8px"></div></div>
+    <div class="card"><div id="runResults"><span class="muted">Not run yet.</span></div></div>
+  </section>
+</main>
+
+<details id="apiLogBox" open>
+  <summary>API calls made by this page (<span id="apiCount">0</span>)</summary>
+  <table><thead><tr><th>#</th><th>User</th><th>Method</th><th>Path</th><th>Status</th><th>ms</th></tr></thead><tbody id="apiLog"></tbody></table>
+</details>
+<script src="app.js"></script>
+<script src="flows.js"></script>
+</body>
+</html>

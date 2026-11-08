@@ -1,0 +1,38 @@
+# Optional PostgreSQL setup. Not executed on the authoring machine (Docker was not installed).
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: agentic
+      POSTGRES_USER: agentic
+      POSTGRES_PASSWORD: agentic
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U agentic -d agentic"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    mem_limit: 256m
+  app:
+    build: .
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: postgres
+      DB_URL: jdbc:postgresql://db:5432/agentic
+      DB_USER: agentic
+      DB_PASSWORD: agentic
+      JAVA_OPTS: "-Xmx384m -XX:+UseSerialGC"
+      AGENTIC_ENGINEER_PASSWORD: ${AGENTIC_ENGINEER_PASSWORD:-engineer123}
+      AGENTIC_APPROVER_PASSWORD: ${AGENTIC_APPROVER_PASSWORD:-approver123}
+      AGENTIC_ADMIN_PASSWORD: ${AGENTIC_ADMIN_PASSWORD:-admin123}
+    ports:
+      - "8080:8080"
+    volumes:
+      - workspace:/app/workspace
+    mem_limit: 640m
+volumes:
+  pgdata:
+  workspace:

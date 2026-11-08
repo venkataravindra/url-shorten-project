@@ -1,0 +1,8 @@
+package com.example.agentic.domain;
+
+/** Actions that governance reasons about. Some require approval, some are always denied. */
+public enum ActionType {
+    PRODUCTION_DEPLOYMENT, DESTRUCTIVE_DATABASE_OPERATION, SECURITY_SENSITIVE_CHANGE, PROTECTED_API_CHANGE,
+    HIGH_IMPACT_ARCHITECTURE_CHANGE, RELEASE_EXECUTION, MATERIAL_ASSUMPTIONS, HIGH_IMPACT_REPLAN,
+    SHELL_COMMAND_EXECUTION, GENERATED_CODE_EXECUTION
+}

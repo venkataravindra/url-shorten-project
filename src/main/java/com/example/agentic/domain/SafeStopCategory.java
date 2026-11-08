@@ -1,0 +1,5 @@
+package com.example.agentic.domain;
+
+public enum SafeStopCategory {
+    POLICY_VIOLATION, SECURITY_CONCERN, CRITICAL_VALIDATION, MAX_RETRIES_EXCEEDED, OPERATOR_REQUEST, RESTART_INTERRUPTED
+}

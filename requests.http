@@ -1,0 +1,54 @@
+### Works with the IntelliJ / VS Code REST client. Base URL and users: see README.
+@host = http://localhost:8080
+@eng = Basic ZW5naW5lZXI6ZW5naW5lZXIxMjM=
+@apr = Basic YXBwcm92ZXI6YXBwcm92ZXIxMjM=
+
+### Health
+GET {{host}}/api/v1/health
+
+### Create a short URL
+POST {{host}}/api/v1/urls
+Authorization: {{eng}}
+Content-Type: application/json
+
+{ "originalUrl": "https://example.com/articles/spring-boot", "customAlias": "spring-guide", "expirationDate": "2027-01-01T00:00:00" }
+
+### Redirect (302)
+GET {{host}}/api/v1/urls/spring-guide
+Referer: https://news.example.org/post
+
+### Analytics
+GET {{host}}/api/v1/urls/spring-guide/analytics
+Authorization: {{eng}}
+
+### Create a workflow (scenario 1)
+# @name wf
+POST {{host}}/api/v1/workflows
+Authorization: {{eng}}
+Content-Type: application/json
+
+{ "requirement": "Build a URL shortener that supports custom aliases, expiration, redirects, and click analytics." }
+
+### Execute
+@id = {{wf.response.body.$.id}}
+POST {{host}}/api/v1/workflows/{{id}}/execute
+Authorization: {{eng}}
+
+### Tasks / DAG
+GET {{host}}/api/v1/workflows/{{id}}/tasks
+Authorization: {{eng}}
+
+### Approve (APPROVER)
+POST {{host}}/api/v1/workflows/{{id}}/approve
+Authorization: {{apr}}
+Content-Type: application/json
+
+{ "comment": "approved" }
+
+### Summary and metrics
+GET {{host}}/api/v1/workflows/{{id}}/summary
+Authorization: {{eng}}
+
+###
+GET {{host}}/api/v1/metrics/summary
+Authorization: {{eng}}

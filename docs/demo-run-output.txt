@@ -1,0 +1,352 @@
+Real output of scripts/demo.ps1 against the packaged jar (java -Xmx384m), captured on the authoring machine.
+Demo duration: 11s. IDs and timestamps differ per run. Attach this with your submission if you do not record a video.
+
+
+=== Health and URL shortener ===
+
+
+status      : UP
+time        : 2026-11-08T07:22:02.328527900Z
+application : agentic-engineering-platform
+
+
+
+
+Short URL: http://localhost:8080/api/v1/urls/demo-7be645
+  HTTP/1.1 302 
+  Location: https://example.com/articles/spring-boot
+{
+    "shortCode":  "demo-7be645",
+    "totalClicks":  1,
+    "firstAccessedAt":  "2026-11-08T07:22:03.466188",
+    "lastAccessedAt":  "2026-11-08T07:22:03.466188",
+    "referrers":  [
+                      {
+                          "referrer":  "news.example.org",
+                          "clicks":  1
+                      }
+                  ],
+    "dailyClicks":  [
+                        {
+                            "date":  "2026-11-08",
+                            "clicks":  1
+                        }
+                    ]
+}
+
+=== Scenario 1 - Greenfield ===
+Requirement: Build a URL shortener that supports custom aliases, expiration, redirects, and click analytics.
+Workflow 5927f6fb-c0bc-41cd-8d84-bfa047db0bfc created -> CREATED
+Executed -> WAITING_FOR_APPROVAL (scenario GREENFIELD)
+  Pending approval #1: RELEASE_EXECUTION - Final human approval of security review verdict 'APPROVE_WITH_COMMENTS' before release readiness is assessed
+
+taskKey               status           revision attempts dependsOn                        
+-------               ------           -------- -------- ---------                        
+requirements          COMPLETED               1        1                                  
+assumption-approval   SKIPPED                 1        0 requirements                     
+planning              COMPLETED               1        1 assumption-approval,requirements 
+architecture          COMPLETED               1        1 planning                         
+architecture-approval SKIPPED                 1        0 architecture                     
+implementation        COMPLETED               1        1 architecture-approval            
+test-planning         COMPLETED               1        1 architecture                     
+documentation         COMPLETED               1        1 implementation,test-planning     
+integration-testing   COMPLETED               1        1 implementation,test-planning     
+security-review       COMPLETED               1        1 documentation,integration-testing
+final-approval        WAITING_APPROVAL        1        0 security-review                  
+release-readiness     PENDING                 1        0 final-approval                   
+engineering-summary   PENDING                 1        0 release-readiness                
+
+
+
+  Approved by approver -> COMPLETED
+
+taskKey               status    revision attempts dependsOn                        
+-------               ------    -------- -------- ---------                        
+requirements          COMPLETED        1        1                                  
+assumption-approval   SKIPPED          1        0 requirements                     
+planning              COMPLETED        1        1 assumption-approval,requirements 
+architecture          COMPLETED        1        1 planning                         
+architecture-approval SKIPPED          1        0 architecture                     
+implementation        COMPLETED        1        1 architecture-approval            
+test-planning         COMPLETED        1        1 architecture                     
+documentation         COMPLETED        1        1 implementation,test-planning     
+integration-testing   COMPLETED        1        1 implementation,test-planning     
+security-review       COMPLETED        1        1 documentation,integration-testing
+final-approval        COMPLETED        1        0 security-review                  
+release-readiness     COMPLETED        1        1 final-approval                   
+engineering-summary   COMPLETED        1        1 release-readiness                
+
+
+
+Summary: Engineering summary (GREENFIELD)
+  - Outcome: GREENFIELD workflow finished; release readiness is READY_WITH_CONDITIONS.
+  - Plan: 10 engineering tasks, critical path 17h.
+  - Quality: 7 planned test cases, acceptance coverage 100%.
+  - Risk: 2 risks recorded; review verdict APPROVE_WITH_COMMENTS.
+  - Governance: Approvals granted: final-approval. Generated code was never executed.
+Release readiness: READY_WITH_CONDITIONS
+
+=== Scenario 2 - Brownfield ===
+Requirement: Enhance the existing URL shortener to support URL expiration and automatic deactivation of expired links.
+Workflow 3a99eb40-0eb1-4630-b134-73c48efb9f59 created -> CREATED
+Executed -> WAITING_FOR_APPROVAL (scenario BROWNFIELD)
+  Pending approval #2: RELEASE_EXECUTION - Final human approval of security review verdict 'APPROVE_WITH_COMMENTS' before release readiness is assessed
+
+taskKey               status           revision attempts dependsOn                        
+-------               ------           -------- -------- ---------                        
+requirements          COMPLETED               1        1                                  
+assumption-approval   SKIPPED                 1        0 requirements                     
+planning              COMPLETED               1        1 assumption-approval,requirements 
+architecture          COMPLETED               1        1 planning                         
+architecture-approval SKIPPED                 1        0 architecture                     
+implementation        COMPLETED               1        1 architecture-approval            
+test-planning         COMPLETED               1        1 architecture                     
+documentation         COMPLETED               1        1 implementation,test-planning     
+integration-testing   COMPLETED               1        1 implementation,test-planning     
+security-review       COMPLETED               1        1 documentation,integration-testing
+final-approval        WAITING_APPROVAL        1        0 security-review                  
+release-readiness     PENDING                 1        0 final-approval                   
+engineering-summary   PENDING                 1        0 release-readiness                
+
+
+
+  Approved by approver -> COMPLETED
+
+taskKey               status    revision attempts dependsOn                        
+-------               ------    -------- -------- ---------                        
+requirements          COMPLETED        1        1                                  
+assumption-approval   SKIPPED          1        0 requirements                     
+planning              COMPLETED        1        1 assumption-approval,requirements 
+architecture          COMPLETED        1        1 planning                         
+architecture-approval SKIPPED          1        0 architecture                     
+implementation        COMPLETED        1        1 architecture-approval            
+test-planning         COMPLETED        1        1 architecture                     
+documentation         COMPLETED        1        1 implementation,test-planning     
+integration-testing   COMPLETED        1        1 implementation,test-planning     
+security-review       COMPLETED        1        1 documentation,integration-testing
+final-approval        COMPLETED        1        0 security-review                  
+release-readiness     COMPLETED        1        1 final-approval                   
+engineering-summary   COMPLETED        1        1 release-readiness                
+
+
+
+Summary: Engineering summary (BROWNFIELD)
+  - Outcome: BROWNFIELD workflow finished; release readiness is READY_WITH_CONDITIONS.
+  - Plan: 7 engineering tasks, critical path 23h.
+  - Quality: 6 planned test cases, acceptance coverage 100%.
+  - Risk: 2 risks recorded; review verdict APPROVE_WITH_COMMENTS.
+  - Governance: Approvals granted: final-approval. Generated code was never executed.
+Release readiness: READY_WITH_CONDITIONS
+
+=== Scenario 2 - change impact analysis (real reflection scan of this application) ===
+{
+    "baselineAnalysed":  true,
+    "impactedApis":  [
+                         {
+                             "endpoint":  "DELETE /api/v1/urls/{shortCode}",
+                             "impact":  "Unaffected"
+                         },
+                         {
+                             "endpoint":  "GET /api/v1/urls",
+                             "impact":  "Listing may show active=false after the job runs"
+                         },
+                         {
+                             "endpoint":  "GET /api/v1/urls/{shortCode}",
+                             "impact":  "No contract change; expired links already return 410"
+                         },
+                         {
+                             "endpoint":  "GET /api/v1/urls/{shortCode}/analytics",
+                             "impact":  "Unaffected"
+                         },
+                         {
+                             "endpoint":  "GET /api/v1/urls/{shortCode}/details",
+                             "impact":  "Unaffected"
+                         },
+                         {
+                             "endpoint":  "POST /api/v1/urls",
+                             "impact":  "No contract change; expirationDate semantics unchanged"
+                         },
+                         {
+                             "endpoint":  "PUT /api/v1/urls/{shortCode}/status",
+                             "impact":  "Unaffected"
+                         }
+                     ],
+    "impactedEntities":  [
+                             {
+                                 "name":  "ShortUrl",
+                                 "change":  "Add nullable deactivatedAt and deactivationReason (additive)"
+                             }
+                         ],
+    "impactedServices":  [
+                             {
+                                 "name":  "UrlShortenerService",
+                                 "change":  "Add deactivateExpired(batchSize)"
+                             }
+                         ],
+    "impactedRepositories":  [
+                                 {
+                                     "name":  "ShortUrlRepository",
+                                     "change":  "Add bounded bulk update on the (active, expirationDate) index"
+                                 }
+                             ],
+    "schedulerAlreadyPresent":  false,
+    "existingTestCoverage":  {
+                                 "note":  "Test classes are not on the runtime classpath, so existing coverage is unknown. Run mvn test."
+                             },
+    "backwardCompatible":  true,
+    "regressionRisks":  [
+                            "Job could deactivate links that a user just extended (race on expirationDate)",
+                            "Large backlog on first run could lock rows; bounded batches mitigate this",
+                            "Clients may assume active=true until expirationDate; list responses now flip earlier"
+                        ]
+}
+
+=== Scenario 3 - Ambiguous ===
+Requirement: Improve the URL shortener performance and make it more reliable.
+Workflow 14eace6d-893f-44af-ac59-ae60de3d25af created -> CREATED
+Executed -> WAITING_FOR_APPROVAL (scenario AMBIGUOUS)
+  Pending approval #3: MATERIAL_ASSUMPTIONS - Approve provisional assumptions and answer clarification questions before planning: [AMB-1: Redirect p95 <= 50 ms at 500 requests/s on a single instance, AMB-2: 99.9% monthly availability for redirects and no loss of committed URL records, AMB-3: A shared cache for redirect lookups may be introduced, AMB-4: A baseline load test is run before any change, Scope is the redirect path; creation and analytics are secondary.]
+
+taskKey               status           revision attempts dependsOn                        
+-------               ------           -------- -------- ---------                        
+requirements          COMPLETED               1        1                                  
+assumption-approval   WAITING_APPROVAL        1        0 requirements                     
+planning              PENDING                 1        0 assumption-approval,requirements 
+architecture          PENDING                 1        0 planning                         
+architecture-approval PENDING                 1        0 architecture                     
+implementation        PENDING                 1        0 architecture-approval            
+test-planning         PENDING                 1        0 architecture                     
+documentation         PENDING                 1        0 implementation,test-planning     
+integration-testing   PENDING                 1        0 implementation,test-planning     
+security-review       PENDING                 1        0 documentation,integration-testing
+final-approval        PENDING                 1        0 security-review                  
+release-readiness     PENDING                 1        0 final-approval                   
+engineering-summary   PENDING                 1        0 release-readiness                
+
+
+
+  Approved by approver -> WAITING_FOR_APPROVAL
+  Pending approval #4: HIGH_IMPACT_ARCHITECTURE_CHANGE - Approve high-impact design actions [HIGH_IMPACT_ARCHITECTURE_CHANGE] proposed by the architecture stage
+  Approved by approver -> WAITING_FOR_APPROVAL
+  Pending approval #5: RELEASE_EXECUTION - Final human approval of security review verdict 'APPROVE_WITH_COMMENTS' before release readiness is assessed
+  Approved by approver -> COMPLETED
+
+taskKey               status    revision attempts dependsOn                        
+-------               ------    -------- -------- ---------                        
+requirements          COMPLETED        1        1                                  
+assumption-approval   COMPLETED        1        0 requirements                     
+planning              COMPLETED        1        1 assumption-approval,requirements 
+architecture          COMPLETED        1        1 planning                         
+architecture-approval COMPLETED        1        0 architecture                     
+implementation        COMPLETED        1        1 architecture-approval            
+test-planning         COMPLETED        1        1 architecture                     
+documentation         COMPLETED        1        1 implementation,test-planning     
+integration-testing   COMPLETED        1        1 implementation,test-planning     
+security-review       COMPLETED        1        1 documentation,integration-testing
+final-approval        COMPLETED        1        0 security-review                  
+release-readiness     COMPLETED        1        1 final-approval                   
+engineering-summary   COMPLETED        1        1 release-readiness                
+
+
+
+Summary: Engineering summary (AMBIGUOUS)
+  - Outcome: AMBIGUOUS workflow finished; release readiness is READY_WITH_CONDITIONS.
+  - Plan: 8 engineering tasks, critical path 21h.
+  - Quality: 6 planned test cases, acceptance coverage 100%.
+  - Risk: 3 risks recorded; review verdict APPROVE_WITH_COMMENTS.
+  - Governance: Approvals granted: assumption-approval, architecture-approval, final-approval. Generated code was never executed.
+Release readiness: READY_WITH_CONDITIONS
+
+=== Retry with exponential backoff, then fallback (fault injection) ===
+planning task needed 3 attempts (2 injected timeouts)
+
+eventType            detail                                                                                            
+---------            ------                                                                                            
+TASK_RETRY_SCHEDULED {"backoffMs":200,"attempt":1,"task":"planning","reason":"Injected timeout calling DECOMPOSE_TAS...
+TASK_RETRY_SCHEDULED {"backoffMs":400,"attempt":2,"task":"planning","reason":"Injected timeout calling DECOMPOSE_TAS...
+
+
+
+
+=== Safe-stop on a security concern ===
+Status: SAFE_STOPPED  category: SECURITY_CONCERN
+Reason: Task 'security-review' failed: Critical review finding RV-3: The plan removes authentication or hard-codes credentials for admin endpoints
+
+=== Dynamic replanning (low impact) on the completed greenfield workflow ===
+Impacted: documentation, security-review, final-approval, release-readiness, engineering-summary
+Preserved: requirements, assumption-approval, planning, architecture, architecture-approval, implementation, test-planning, integration-testing
+
+=== Metrics ===
+{
+    "totalWorkflows":  5,
+    "workflowsByStatus":  {
+                              "COMPLETED":  2,
+                              "CREATED":  1,
+                              "SAFE_STOPPED":  1,
+                              "WAITING_FOR_APPROVAL":  1
+                          },
+    "workflowSuccessRate":  0.6667,
+    "workflowFailureRate":  0.3333,
+    "retryCount":  2,
+    "rollbackCount":  0,
+    "rollbackFrequency":  0.0,
+    "safeStopCount":  1,
+    "safeStopFrequency":  0.2,
+    "avgEndToEndLatencyMs":  1048.3333333333333,
+    "avgApprovalWaitMs":  93.2,
+    "approvalsDecided":  5,
+    "taskSuccessRate":  0.9787,
+    "agentExecutions":  [
+                            {
+                                "agent":  "architecture",
+                                "executions":  5,
+                                "avgDurationMs":  12.0
+                            },
+                            {
+                                "agent":  "coding",
+                                "executions":  5,
+                                "avgDurationMs":  2.8
+                            },
+                            {
+                                "agent":  "documentation",
+                                "executions":  8,
+                                "avgDurationMs":  0.375
+                            },
+                            {
+                                "agent":  "planning",
+                                "executions":  7,
+                                "avgDurationMs":  1.0
+                            },
+                            {
+                                "agent":  "release",
+                                "executions":  3,
+                                "avgDurationMs":  8.666666666666666
+                            },
+                            {
+                                "agent":  "requirement",
+                                "executions":  5,
+                                "avgDurationMs":  4.8
+                            },
+                            {
+                                "agent":  "review",
+                                "executions":  5,
+                                "avgDurationMs":  5.8
+                            },
+                            {
+                                "agent":  "testing",
+                                "executions":  10,
+                                "avgDurationMs":  0.5
+                            }
+                        ],
+    "mttrSamples":  0,
+    "definitions":  [
+                        "successRate = COMPLETED / (COMPLETED + FAILED + ROLLED_BACK + SAFE_STOPPED); CANCELLED and in-progress workflows are excluded",
+                        "failureRate = (FAILED + ROLLED_BACK + SAFE_STOPPED) / the same denominator",
+                        "retryCount = persisted agent executions with attempt \u003e 1 (includes the fallback attempt)",
+                        "taskSuccessRate = COMPLETED tasks / (COMPLETED + FAILED tasks); skipped and pending tasks excluded",
+                        "approval wait = decidedAt - requestedAt for APPROVED/REJECTED approvals; includes human think time",
+                        "MTTR = mean time from a workflow\u0027s first SAFE_STOPPED/FAILED audit event to its next WORKFLOW_COMPLETED event; only workflows that recovered are sampled, and it includes the time a human took to intervene"
+                    ]
+}
+
+Demo finished. Swagger UI: http://localhost:8080/swagger-ui.html   H2 console: http://localhost:8080/h2-console

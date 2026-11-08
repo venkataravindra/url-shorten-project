@@ -1,0 +1,3621 @@
+{
+ "generatedAt": "2026-11-08T09:42:40.171Z",
+ "base": "http://localhost:8080",
+ "steps": [
+  {
+   "n": 1,
+   "section": "Sign-in and dashboard",
+   "title": "Console before sign-in",
+   "note": "The single-page console is served by the Spring Boot application itself (no separate frontend server). Every API call the page makes is listed in the panel at the bottom.",
+   "caption": "Open the console. Users: engineer, approver, admin (role-based access)",
+   "file": "shots/01-console-before-sign-in.png",
+   "calls": []
+  },
+  {
+   "n": 2,
+   "section": "Sign-in and dashboard",
+   "title": "Signed in as engineer, dashboard",
+   "note": "GET /api/v1/whoami identifies the user and roles; the dashboard reads GET /api/v1/metrics/summary. The database is fresh, so all counters start at zero.",
+   "caption": "Sign in as engineer",
+   "file": "shots/02-signed-in-as-engineer-dashboard.png",
+   "calls": [
+    {
+     "n": 1,
+     "user": "engineer",
+     "method": "GET",
+     "path": "/api/v1/whoami",
+     "status": 200,
+     "ms": 37
+    },
+    {
+     "n": 2,
+     "user": "engineer",
+     "method": "GET",
+     "path": "/api/v1/metrics/summary",
+     "status": 200,
+     "ms": 156
+    },
+    {
+     "n": 3,
+     "user": "engineer",
+     "method": "GET",
+     "path": "/api/v1/workflows?page=0&size=6",
+     "status": 200,
+     "ms": 58
+    }
+   ]
+  },
+  {
+   "n": 3,
+   "section": "URL shortener",
+   "title": "Create form",
+   "note": "Original URL, optional custom alias and optional expiration date.",
+   "caption": "URL shortener: create a short link with a custom alias",
+   "file": "shots/03-create-form.png",
+   "calls": [
+    {
+     "n": 1,
+     "user": "engineer",
+     "method": "GET",
+     "path": "/api/v1/urls?page=0&size=15",
+     "status": 200,
+     "ms": 31
+    }
+   ]
+  },
+  {
+   "n": 4,
+   "section": "URL shortener",
+   "title": "Short URL created",
+   "note": "POST /api/v1/urls returned 201; GET /api/v1/urls refreshed the table.",
+   "caption": "URL shortener: create a short link with a custom alias",
+   "file": "shots/04-short-url-created.png",
+   "calls": [
+    {
+     "n": 1,
+     "user": "engineer",
+     "method": "POST",
+     "path": "/api/v1/urls",
+     "status": 201,
+     "ms": 210
+    },
+    {
+     "n": 2,
+     "user": "engineer",
+     "method": "GET",
+     "path": "/api/v1/urls?page=0&size=15",
+     "status": 200,
+     "ms": 16
+    }
+   ]
+  },
+  {
+   "n": 5,
+   "section": "URL shortener",
+   "title": "Three redirects recorded",
+   "note": "GET /api/v1/urls/{code} answers 302 (the browser reports it as an opaque redirect). Click count and timestamps are persisted.",
+   "caption": "Simulate three visits: each is an HTTP 302 redirect and counts a click",
+   "file": "shots/05-three-redirects-recorded.png",
+   "calls": [
+    {
+     "n": 1,
+     "user": "public",
+     "method": "GET",
+     "path": "/api/v1/urls/demo-6130",
+     "status": 302,
+     "ms": 208
+    },
+    {
+     "n": 2,
+     "user": "public",
+     "method": "GET",
+     "path": "/api/v1/urls/demo-6130",
+     "status": 302,
+     "ms": 27
+    },
+    {
+     "n": 3,
+     "user": "public",
+     "method": "GET",
+     "path": "/api/v1/urls/demo-6130",
+     "status": 302,
+     "ms": 26
+    },
+    {
+     "n": 4,
+     "user": "engineer",
+     "method": "GET",
+     "path": "/api/v1/urls?page=0&size=15",
+     "status": 200,
+     "ms": 26
+    }
+   ]
+  },
+  {
+   "n": 6,
+   "section": "URL shortener",
+   "title": "Analytics",
+   "note": "GET /api/v1/urls/{code}/analytics: total clicks, first and last access timestamps, referrer statistics and daily click statistics.",
+   "caption": "Analytics: total clicks, first/last access, referrers, daily clicks",
+   "file": "shots/06-analytics.png",
+   "calls": [
+    {
+     "n": 1,
+     "user": "engineer",
+     "method": "GET",
+     "path": "/api/v1/urls/demo-6130/analytics",
+     "status": 200,
+     "ms": 46
+    }
+   ]
+  },
+  {
+   "n": 7,
+   "section": "URL shortener",
+   "title": "Deactivated link answers 410",
+   "note": "DELETE /api/v1/urls/{code} returned 204 (soft delete); visiting the link now returns 410 Gone.",
+   "caption": "Deactivate (soft delete): the link now answers 410 Gone",
+   "file": "shots/07-deactivated-link-answers-410.png",
+   "calls": [
+    {
+     "n": 1,
+     "user": "engineer",
+     "method": "DELETE",
+     "path": "/api/v1/urls/demo-6130",
+     "status": 204,
+     "ms": 20
+    },
+    {
+     "n": 2,
+     "user": "engineer",
+     "method": "GET",
+     "path": "/api/v1/urls?page=0&size=15",
+     "status": 200,
+     "ms": 10
+    },
+    {
+     "n": 3,
+     "user": "public",
+     "method": "GET",
+     "path": "/api/v1/urls/demo-6130",
+     "status": 410,
+     "ms": 15
+    },
+    {
+     "n": 4,
+     "user": "public",
+     "method": "GET",
+     "path": "/api/v1/urls/demo-6130",
+     "status": 410,
+     "ms": 9
+    },
+    {
+     "n": 5,
+     "user": "public",
+     "method": "GET",
+     "path": "/api/v1/urls/demo-6130",
+     "status": 410,
+     "ms": 10
+    },
+    {
+     "n": 6,
+     "user": "engineer",
+     "method": "GET",
+     "path": "/api/v1/urls?page=0&size=15",
+     "status": 200,
+     "ms": 10
+    }
+   ]
+  },
+  {
+   "n": 8,
+   "section": "URL shortener",
+   "title": "Link reactivated",
+   "note": "PUT /api/v1/urls/{code}/status {active:true} reactivated the link.",
+   "caption": "Deactivate (soft delete): the link now answers 410 Gone",
+   "file": "shots/08-link-reactivated.png",
+   "calls": [
+    {
+     "n": 1,
+     "user": "engineer",
+     "method": "PUT",
+     "path": "/api/v1/urls/demo-6130/status",
+     "status": 200,
+     "ms": 23
+    },
+    {
+     "n": 2,
+     "user": "engineer",
+     "method": "GET",
+     "path": "/api/v1/urls?page=0&size=15",
+     "status": 200,
+     "ms": 10
+    }
+   ]
+  },
+  {
+   "n": 9,
+   "section": "Scenario 1 - Greenfield",
+   "title": "Workflow created",
+   "note": "POST /api/v1/workflows created the workflow with 13 DAG nodes (nothing has run yet). Dashed nodes are human approval gates.",
+   "caption": "Scenario 1 (greenfield): requirement to workflow",
+   "file": "shots/09-workflow-created.png",
+   "calls": [
+    {
+     "n": 1,
+     "user": "engineer",
+     "method": "GET",
+     "path": "/api/v1/workflows?page=0&size=20",
+     "status": 200,
+     "ms": 21
+    },
+    {
+     "n": 2,
+     "user": "engineer",
+     "method": "POST",
+     "path": "/api/v1/workflows",
+     "status": 201,
+     "ms": 471
+    },
+    {
+     "n": 3,
+     "user": "engineer",
+     "method": "GET",
+     "path": "/api/v1/workflows?page=0&size=20",
+     "status": 200,
+     "ms": 35
+    },
+    {
+     "n": 4,
+     "user": "engineer",
+     "method": "GET",
+     "path": "/api/v1/workflows/a4aa1d35-d071-45db-bb39-f2e3e5a81dbf/approvals",
+     "status": 200,
+     "ms": 28
+    },
+    {
+     "n": 5,
+     "user": "engineer",
+     "method": "GET",
+     "path": "/api/v1/workflows/a4aa1d35-d071-45db-bb39-f2e3e5a81dbf",
+     "status": 200,
+     "ms": 30
+    },
+    {
+     "n": 6,
+     "user": "engineer",
+     "method": "GET",
+     "path": "/api/v1/workflows/a4aa1d35-d071-45db-bb39-f2e3e5a81dbf/tasks?includeOutput=true",
+     "status": 200,
+     "ms": 47
+    },
+    {
+     "n": 7,
+     "user": "engineer",
+     "method": "GET",
+     "path": "/api/v1/workflows?page=0&size=20",
+     "status": 200,
+     "ms": 28
+    }
+   ]
+  },
+  {
+   "n": 10,
+   "section": "Scenario 1 - Greenfield",
+   "title": "Executed, waiting for final approval",
+   "note": "POST /execute ran requirement, planning, architecture, then implementation and test-planning in parallel, documentation and validation, security review. The workflow paused at the human final approval; the two conditional gates were skipped.",
+   "caption": "Execute: agents run as a DAG, independent branches run in parallel",
+   "file": "shots/10-executed-waiting-for-final-approval.png",
+   "calls": [
+    {
+     "n": 1,
+     "user": "engineer",
+     "method": "POST",
+     "path": "/api/v1/workflows/a4aa1d35-d071-45db-bb39-f2e3e5a81dbf/execute",
+     "status": 200,
+     "ms": 2575
+    },
+    {
+     "n": 2,
+     "user": "engineer",
+     "method": "GET",
+     "path": "/api/v1/workflows/a4aa1d35-d071-45db-bb39-f2e3e5a81dbf/approvals",
+     "status": 200,
+     "ms": 15
+    },
+    {
+     "n": 3,
+     "user": "engineer",
+     "method": "GET",
+     "path": "/api/v1/workflows/a4aa1d35-d071-45db-bb39-f2e3e5a81dbf",
+     "status": 200,
+     "ms": 17
+    },
+    {
+     "n": 4,
+     "user": "engineer",
+     "method": "GET",
+     "path": "/api/v1/workflows/a4aa1d35-d071-45db-bb39-f2e3e5a81dbf/tasks?includeOutput=true",
+     "status": 200,
+     "ms": 22
+    },
+    {
+     "n": 5,
+     "user": "engineer",
+     "method": "GET",
+     "path": "/api/v1/workflows?page=0&size=20",
+     "status": 200,
+     "ms": 17
+    }
+   ]
+  },
+  {
+   "n": 11,
+   "section": "Scenario 1 - Greenfield",
+   "title": "Engineer approval denied (403)",
+   "note": "The server answered 403 and explains which role is needed. Approvals are enforced by role (APPROVER).",
+   "caption": "Governance: an engineer is NOT allowed to approve",
+   "file": "shots/11-engineer-approval-denied-403.png",
+   "calls": [
+    {
+     "n": 1,
+     "user": "engineer",
+     "method": "POST",
+     "path": "/api/v1/workflows/a4aa1d35-d071-45db-bb39-f2e3e5a81dbf/approve",
+     "status": 403,
+     "ms": 9
+    },
+    {
+     "n": 2,
+     "user": "engineer",
+     "method": "GET",
+     "path": "/api/v1/workflows/a4aa1d35-d071-45db-bb39-f2e3e5a81dbf/approvals",
+     "status": 200,
+     "ms": 12
+    },
+    {
+     "n": 3,
+     "user": "engineer",
+     "method": "GET",
+     "path": "/api/v1/workflows/a4aa1d35-d071-45db-bb39-f2e3e5a81dbf",
+     "status": 200,
+     "ms": 15
+    },
+    {
+     "n": 4,
+     "user": "engineer",
+     "method": "GET",
+     "path": "/api/v1/workflows/a4aa1d35-d071-45db-bb39-f2e3e5a81dbf/tasks?includeOutput=true",
+     "status": 200,
+     "ms": 18
+    },
+    {
+     "n": 5,
+     "user": "engineer",
+     "method": "GET",
+     "path": "/api/v1/workflows?page=0&size=20",
+     "status": 200,
+     "ms": 17
+    }
+   ]
+  },
+  {
+   "n": 12,
+   "section": "Scenario 1 - Greenfield",
+   "title": "Approved, workflow completed",
+   "note": "POST /approve by the approver granted the gate; the workflow resumed and COMPLETED (release readiness and engineering summary).",
+   "caption": "Sign in as approver and approve the release",
+   "file": "shots/12-approved-workflow-completed.png",
+   "calls": [
+    {
+     "n": 1,
+     "user": "approver",
+     "method": "GET",
+     "path": "/api/v1/whoami",
+     "status": 200,
+     "ms": 10
+    },
+    {
+     "n": 2,
+     "user": "approver",
+     "method": "GET",
+     "path": "/api/v1/workflows?page=0&size=20",
+     "status": 200,
+     "ms": 22
+    },
+    {
+     "n": 3,
+     "user": "approver",
+     "method": "GET",
+     "path": "/api/v1/workflows/a4aa1d35-d071-45db-bb39-f2e3e5a81dbf/approvals",
+     "status": 200,
+     "ms": 9
+    },
+    {
+     "n": 4,
+     "user": "approver",
+     "method": "GET",
+     "path": "/api/v1/workflows/a4aa1d35-d071-45db-bb39-f2e3e5a81dbf",
+     "status": 200,
+     "ms": 14
+    },
+    {
+     "n": 5,
+     "user": "approver",
+     "method": "GET",
+     "path": "/api/v1/workflows/a4aa1d35-d071-45db-bb39-f2e3e5a81dbf/tasks?includeOutput=true",
+     "status": 200,
+     "ms": 15
+    },
+    {
+     "n": 6,
+     "user": "approver",
+     "method": "GET",
+     "path": "/api/v1/workflows?page=0&size=20",
+     "status": 200,
+     "ms": 17
+    },
+    {
+     "n": 7,
+     "user": "approver",
+     "method": "POST",
+     "path": "/api/v1/workflows/a4aa1d35-d071-45db-bb39-f2e3e5a81dbf/approve",
+     "status": 200,
+     "ms": 152
+    },
+    {
+     "n": 8,
+     "user": "approver",
+     "method": "GET",
+     "path": "/api/v1/workflows/a4aa1d35-d071-45db-bb39-f2e3e5a81dbf/approvals",
+     "status": 200,
+     "ms": 11
+    },
+    {
+     "n": 9,
+     "user": "approver",
+     "method": "GET",
+     "path": "/api/v1/workflows/a4aa1d35-d071-45db-bb39-f2e3e5a81dbf",
+     "status": 200,
+     "ms": 13
+    },
+    {
+     "n": 10,
+     "user": "approver",
+     "method": "GET",
+     "path": "/api/v1/workflows/a4aa1d35-d071-45db-bb39-f2e3e5a81dbf/tasks?includeOutput=true",
+     "status": 200,
+     "ms": 17
+    },
+    {
+     "n": 11,
+     "user": "approver",
+     "method": "GET",
+     "path": "/api/v1/workflows?page=0&size=20",
+     "status": 200,
+     "ms": 17
+    }
+   ]
+  },
+  {
+   "n": 13,
+   "section": "Scenario 1 - Greenfield",
+   "title": "Generated artifacts",
+   "note": "GET /artifacts?includeContent=true: versioned artifacts, all ACCEPTED after final approval; content stored in the approved workspace only.",
+   "caption": "Sign in as approver and approve the release",
+   "file": "shots/13-generated-artifacts.png",
+   "calls": [
+    {
+     "n": 1,
+     "user": "approver",
+     "method": "GET",
+     "path": "/api/v1/workflows/a4aa1d35-d071-45db-bb39-f2e3e5a81dbf/artifacts?includeContent=true",
+     "status": 200,
+     "ms": 24
+    }
+   ]
+  },
+  {
+   "n": 14,
+   "section": "Scenario 1 - Greenfield",
+   "title": "Decision lineage",
+   "note": "GET /decisions: each decision lists the upstream decisions it builds on (Builds on column).",
+   "caption": "Sign in as approver and approve the release",
+   "file": "shots/14-decision-lineage.png",
+   "calls": [
+    {
+     "n": 1,
+     "user": "approver",
+     "method": "GET",
+     "path": "/api/v1/workflows/a4aa1d35-d071-45db-bb39-f2e3e5a81dbf/decisions",
+     "status": 200,
+     "ms": 15
+    }
+   ]
+  },
+  {
+   "n": 15,
+   "section": "Scenario 1 - Greenfield",
+   "title": "Audit trail",
+   "note": "GET /api/v1/audit/workflows/{id}: every sensitive step is recorded (creation, task results, approvals, artifact promotion).",
+   "caption": "Sign in as approver and approve the release",
+   "file": "shots/15-audit-trail.png",
+   "calls": [
+    {
+     "n": 1,
+     "user": "approver",
+     "method": "GET",
+     "path": "/api/v1/audit/workflows/a4aa1d35-d071-45db-bb39-f2e3e5a81dbf",
+     "status": 200,
+     "ms": 25
+    }
+   ]
+  },
+  {
+   "n": 16,
+   "section": "Scenario 1 - Greenfield",
+   "title": "Workflow metrics",
+   "note": "GET /api/v1/metrics/workflows/{id}: latency, agent executions, retries, approval wait.",
+   "caption": "Sign in as approver and approve the release",
+   "file": "shots/16-workflow-metrics.png",
+   "calls": [
+    {
+     "n": 1,
+     "user": "approver",
+     "method": "GET",
+     "path": "/api/v1/metrics/workflows/a4aa1d35-d071-45db-bb39-f2e3e5a81dbf",
+     "status": 200,
+     "ms": 32
+    }
+   ]
+  },
+  {
+   "n": 17,
+   "section": "Scenario 1 - Greenfield",
+   "title": "Engineering summary",
+   "note": "GET /summary: final engineering summary and release readiness. The platform never deploys; it only assesses readiness.",
+   "caption": "Sign in as approver and approve the release",
+   "file": "shots/17-engineering-summary.png",
+   "calls": [
+    {
+     "n": 1,
+     "user": "approver",
+     "method": "GET",
+     "path": "/api/v1/workflows/a4aa1d35-d071-45db-bb39-f2e3e5a81dbf/summary",
+     "status": 200,
+     "ms": 33
+    }
+   ]
+  },
+  {
+   "n": 18,
+   "section": "Scenario 2 - Brownfield",
+   "title": "Brownfield workflow executed",
+   "note": "Same DAG, different content. The architecture stage first scans the real URL shortener module of this application by reflection.",
+   "caption": "Scenario 2 (brownfield): enhance the existing URL shortener",
+   "file": "shots/18-brownfield-workflow-executed.png",
+   "calls": [
+    {
+     "n": 1,
+     "user": "approver",
+     "method": "GET",
+     "path": "/api/v1/workflows?page=0&size=20",
+     "status": 200,
+     "ms": 11
+    },
+    {
+     "n": 2,
+     "user": "approver",
+     "method": "POST",
+     "path": "/api/v1/workflows",
+     "status": 201,
+     "ms": 35
+    },
+    {
+     "n": 3,
+     "user": "approver",
+     "method": "GET",
+     "path": "/api/v1/workflows?page=0&size=20",
+     "status": 200,
+     "ms": 22
+    },
+    {
+     "n": 4,
+     "user": "approver",
+     "method": "GET",
+     "path": "/api/v1/workflows/e403804f-d111-4b2c-91cd-3ce381bbc3c6/approvals",
+     "status": 200,
+     "ms": 14
+    },
+    {
+     "n": 5,
+     "user": "approver",
+     "method": "GET",
+     "path": "/api/v1/workflows/e403804f-d111-4b2c-91cd-3ce381bbc3c6",
+     "status": 200,
+     "ms": 18
+    },
+    {
+     "n": 6,
+     "user": "approver",
+     "method": "GET",
+     "path": "/api/v1/workflows/e403804f-d111-4b2c-91cd-3ce381bbc3c6/tasks?includeOutput=true",
+     "status": 200,
+     "ms": 19
+    },
+    {
+     "n": 7,
+     "user": "approver",
+     "method": "GET",
+     "path": "/api/v1/workflows?page=0&size=20",
+     "status": 200,
+     "ms": 26
+    },
+    {
+     "n": 8,
+     "user": "approver",
+     "method": "POST",
+     "path": "/api/v1/workflows/e403804f-d111-4b2c-91cd-3ce381bbc3c6/execute",
+     "status": 200,
+     "ms": 687
+    },
+    {
+     "n": 9,
+     "user": "approver",
+     "method": "GET",
+     "path": "/api/v1/workflows/e403804f-d111-4b2c-91cd-3ce381bbc3c6/approvals",
+     "status": 200,
+     "ms": 23
+    },
+    {
+     "n": 10,
+     "user": "approver",
+     "method": "GET",
+     "path": "/api/v1/workflows/e403804f-d111-4b2c-91cd-3ce381bbc3c6",
+     "status": 200,
+     "ms": 26
+    },
+    {
+     "n": 11,
+     "user": "approver",
+     "method": "GET",
+     "path": "/api/v1/workflows/e403804f-d111-4b2c-91cd-3ce381bbc3c6/tasks?includeOutput=true",
+     "status": 200,
+     "ms": 34
+    },
+    {
+     "n": 12,
+     "user": "approver",
+     "method": "GET",
+     "path": "/api/v1/workflows?page=0&size=20",
+     "status": 200,
+     "ms": 44
+    }
+   ]
+  },
+  {
+   "n": 19,
+   "section": "Scenario 2 - Brownfield",
+   "title": "Change impact analysis",
+   "note": "Architecture output: impacted APIs, entities, services and repositories discovered from the actual module, existing test discovery and backward-compatibility assessment.",
+   "caption": "Change impact analysis built from the real code base",
+   "file": "shots/19-change-impact-analysis.png",
+   "calls": []
+  },
+  {
+   "n": 20,
+   "section": "Scenario 2 - Brownfield",
+   "title": "Regression risks",
+   "note": "Regression risks and the statement that the change is backward compatible.",
+   "caption": "Change impact analysis built from the real code base",
+   "file": "shots/20-regression-risks.png",
+   "calls": []
+  },
+  {
+   "n": 21,
+   "section": "Scenario 2 - Brownfield",
+   "title": "Brownfield completed",
+   "note": "Approved and completed.",
+   "caption": "Change impact analysis built from the real code base",
+   "file": "shots/21-brownfield-completed.png",
+   "calls": [
+    {
+     "n": 1,
+     "user": "approver",
+     "method": "POST",
+     "path": "/api/v1/workflows/e403804f-d111-4b2c-91cd-3ce381bbc3c6/approve",
+     "status": 200,
+     "ms": 124
+    },
+    {
+     "n": 2,
+     "user": "approver",
+     "method": "GET",
+     "path": "/api/v1/workflows/e403804f-d111-4b2c-91cd-3ce381bbc3c6/approvals",
+     "status": 200,
+     "ms": 12
+    },
+    {
+     "n": 3,
+     "user": "approver",
+     "method": "GET",
+     "path": "/api/v1/workflows/e403804f-d111-4b2c-91cd-3ce381bbc3c6",
+     "status": 200,
+     "ms": 15
+    },
+    {
+     "n": 4,
+     "user": "approver",
+     "method": "GET",
+     "path": "/api/v1/workflows/e403804f-d111-4b2c-91cd-3ce381bbc3c6/tasks?includeOutput=true",
+     "status": 200,
+     "ms": 17
+    },
+    {
+     "n": 5,
+     "user": "approver",
+     "method": "GET",
+     "path": "/api/v1/workflows?page=0&size=20",
+     "status": 200,
+     "ms": 21
+    }
+   ]
+  },
+  {
+   "n": 22,
+   "section": "Scenario 3 - Ambiguous requirement",
+   "title": "Paused for assumption approval",
+   "note": "Blocking ambiguities were found. Planning has NOT started; the workflow waits for a human to approve the provisional assumptions.",
+   "caption": "Scenario 3: an ambiguous requirement must not become silent decisions",
+   "file": "shots/22-paused-for-assumption-approval.png",
+   "calls": [
+    {
+     "n": 1,
+     "user": "approver",
+     "method": "GET",
+     "path": "/api/v1/workflows?page=0&size=20",
+     "status": 200,
+     "ms": 14
+    },
+    {
+     "n": 2,
+     "user": "approver",
+     "method": "POST",
+     "path": "/api/v1/workflows",
+     "status": 201,
+     "ms": 34
+    },
+    {
+     "n": 3,
+     "user": "approver",
+     "method": "GET",
+     "path": "/api/v1/workflows?page=0&size=20",
+     "status": 200,
+     "ms": 22
+    },
+    {
+     "n": 4,
+     "user": "approver",
+     "method": "GET",
+     "path": "/api/v1/workflows/78aa1127-1cd1-4192-8d04-c8909b3de69e/approvals",
+     "status": 200,
+     "ms": 10
+    },
+    {
+     "n": 5,
+     "user": "approver",
+     "method": "GET",
+     "path": "/api/v1/workflows/78aa1127-1cd1-4192-8d04-c8909b3de69e",
+     "status": 200,
+     "ms": 18
+    },
+    {
+     "n": 6,
+     "user": "approver",
+     "method": "GET",
+     "path": "/api/v1/workflows/78aa1127-1cd1-4192-8d04-c8909b3de69e/tasks?includeOutput=true",
+     "status": 200,
+     "ms": 18
+    },
+    {
+     "n": 7,
+     "user": "approver",
+     "method": "GET",
+     "path": "/api/v1/workflows?page=0&size=20",
+     "status": 200,
+     "ms": 32
+    },
+    {
+     "n": 8,
+     "user": "approver",
+     "method": "POST",
+     "path": "/api/v1/workflows/78aa1127-1cd1-4192-8d04-c8909b3de69e/execute",
+     "status": 200,
+     "ms": 118
+    },
+    {
+     "n": 9,
+     "user": "approver",
+     "method": "GET",
+     "path": "/api/v1/workflows/78aa1127-1cd1-4192-8d04-c8909b3de69e/approvals",
+     "status": 200,
+     "ms": 18
+    },
+    {
+     "n": 10,
+     "user": "approver",
+     "method": "GET",
+     "path": "/api/v1/workflows/78aa1127-1cd1-4192-8d04-c8909b3de69e",
+     "status": 200,
+     "ms": 20
+    },
+    {
+     "n": 11,
+     "user": "approver",
+     "method": "GET",
+     "path": "/api/v1/workflows/78aa1127-1cd1-4192-8d04-c8909b3de69e/tasks?includeOutput=true",
+     "status": 200,
+     "ms": 28
+    },
+    {
+     "n": 12,
+     "user": "approver",
+     "method": "GET",
+     "path": "/api/v1/workflows?page=0&size=20",
+     "status": 200,
+     "ms": 36
+    }
+   ]
+  },
+  {
+   "n": 23,
+   "section": "Scenario 3 - Ambiguous requirement",
+   "title": "Questions and assumptions",
+   "note": "Requirements output: clarification questions, provisional assumptions (for example p95 latency and availability targets) and missing information such as baselines.",
+   "caption": "Clarification questions, provisional assumptions and missing information",
+   "file": "shots/23-questions-and-assumptions.png",
+   "calls": []
+  },
+  {
+   "n": 24,
+   "section": "Scenario 3 - Ambiguous requirement",
+   "title": "Second gate: high-impact design",
+   "note": "After the assumptions were approved the plan was produced. Introducing a shared cache is a high-impact architecture change, so a second approval is required. test-planning already completed in parallel.",
+   "caption": "Approval 1 of 3: material assumptions",
+   "file": "shots/24-second-gate-high-impact-design.png",
+   "calls": [
+    {
+     "n": 1,
+     "user": "approver",
+     "method": "POST",
+     "path": "/api/v1/workflows/78aa1127-1cd1-4192-8d04-c8909b3de69e/approve",
+     "status": 200,
+     "ms": 216
+    },
+    {
+     "n": 2,
+     "user": "approver",
+     "method": "GET",
+     "path": "/api/v1/workflows/78aa1127-1cd1-4192-8d04-c8909b3de69e",
+     "status": 200,
+     "ms": 29
+    },
+    {
+     "n": 3,
+     "user": "approver",
+     "method": "GET",
+     "path": "/api/v1/workflows/78aa1127-1cd1-4192-8d04-c8909b3de69e/tasks?includeOutput=true",
+     "status": 200,
+     "ms": 29
+    },
+    {
+     "n": 4,
+     "user": "approver",
+     "method": "GET",
+     "path": "/api/v1/workflows/78aa1127-1cd1-4192-8d04-c8909b3de69e/approvals",
+     "status": 200,
+     "ms": 29
+    },
+    {
+     "n": 5,
+     "user": "approver",
+     "method": "GET",
+     "path": "/api/v1/workflows?page=0&size=20",
+     "status": 200,
+     "ms": 33
+    }
+   ]
+  },
+  {
+   "n": 25,
+   "section": "Scenario 3 - Ambiguous requirement",
+   "title": "Third gate: release",
+   "note": "Design approved; implementation, documentation, validation and review ran; final release approval pending.",
+   "caption": "Approval 2 of 3: design",
+   "file": "shots/25-third-gate-release.png",
+   "calls": [
+    {
+     "n": 1,
+     "user": "approver",
+     "method": "POST",
+     "path": "/api/v1/workflows/78aa1127-1cd1-4192-8d04-c8909b3de69e/approve",
+     "status": 200,
+     "ms": 152
+    },
+    {
+     "n": 2,
+     "user": "approver",
+     "method": "GET",
+     "path": "/api/v1/workflows/78aa1127-1cd1-4192-8d04-c8909b3de69e/approvals",
+     "status": 200,
+     "ms": 12
+    },
+    {
+     "n": 3,
+     "user": "approver",
+     "method": "GET",
+     "path": "/api/v1/workflows/78aa1127-1cd1-4192-8d04-c8909b3de69e",
+     "status": 200,
+     "ms": 14
+    },
+    {
+     "n": 4,
+     "user": "approver",
+     "method": "GET",
+     "path": "/api/v1/workflows/78aa1127-1cd1-4192-8d04-c8909b3de69e/tasks?includeOutput=true",
+     "status": 200,
+     "ms": 15
+    },
+    {
+     "n": 5,
+     "user": "approver",
+     "method": "GET",
+     "path": "/api/v1/workflows?page=0&size=20",
+     "status": 200,
+     "ms": 22
+    }
+   ]
+  },
+  {
+   "n": 26,
+   "section": "Scenario 3 - Ambiguous requirement",
+   "title": "Ambiguous scenario completed",
+   "note": "Completed after three human approvals. Release readiness is READY_WITH_CONDITIONS because the targets are still provisional.",
+   "caption": "Approval 3 of 3: release",
+   "file": "shots/26-ambiguous-scenario-completed.png",
+   "calls": [
+    {
+     "n": 1,
+     "user": "approver",
+     "method": "POST",
+     "path": "/api/v1/workflows/78aa1127-1cd1-4192-8d04-c8909b3de69e/approve",
+     "status": 200,
+     "ms": 129
+    },
+    {
+     "n": 2,
+     "user": "approver",
+     "method": "GET",
+     "path": "/api/v1/workflows/78aa1127-1cd1-4192-8d04-c8909b3de69e/approvals",
+     "status": 200,
+     "ms": 11
+    },
+    {
+     "n": 3,
+     "user": "approver",
+     "method": "GET",
+     "path": "/api/v1/workflows/78aa1127-1cd1-4192-8d04-c8909b3de69e",
+     "status": 200,
+     "ms": 12
+    },
+    {
+     "n": 4,
+     "user": "approver",
+     "method": "GET",
+     "path": "/api/v1/workflows/78aa1127-1cd1-4192-8d04-c8909b3de69e/tasks?includeOutput=true",
+     "status": 200,
+     "ms": 14
+    },
+    {
+     "n": 5,
+     "user": "approver",
+     "method": "GET",
+     "path": "/api/v1/workflows?page=0&size=20",
+     "status": 200,
+     "ms": 23
+    }
+   ]
+  },
+  {
+   "n": 27,
+   "section": "Rejection and rollback",
+   "title": "Rejected, rolled back",
+   "note": "POST /reject: the workflow is ROLLED_BACK and its staged artifact versions are reverted (a safe, reversible operation).",
+   "caption": "Rejection: a rejected approval rolls the workflow back",
+   "file": "shots/27-rejected-rolled-back.png",
+   "calls": [
+    {
+     "n": 1,
+     "user": "approver",
+     "method": "GET",
+     "path": "/api/v1/workflows?page=0&size=20",
+     "status": 200,
+     "ms": 25
+    },
+    {
+     "n": 2,
+     "user": "approver",
+     "method": "POST",
+     "path": "/api/v1/workflows",
+     "status": 201,
+     "ms": 26
+    },
+    {
+     "n": 3,
+     "user": "approver",
+     "method": "GET",
+     "path": "/api/v1/workflows?page=0&size=20",
+     "status": 200,
+     "ms": 19
+    },
+    {
+     "n": 4,
+     "user": "approver",
+     "method": "GET",
+     "path": "/api/v1/workflows/7d0fa12f-bf89-49af-bfa2-5458142def3b/approvals",
+     "status": 200,
+     "ms": 13
+    },
+    {
+     "n": 5,
+     "user": "approver",
+     "method": "GET",
+     "path": "/api/v1/workflows/7d0fa12f-bf89-49af-bfa2-5458142def3b",
+     "status": 200,
+     "ms": 28
+    },
+    {
+     "n": 6,
+     "user": "approver",
+     "method": "GET",
+     "path": "/api/v1/workflows/7d0fa12f-bf89-49af-bfa2-5458142def3b/tasks?includeOutput=true",
+     "status": 200,
+     "ms": 29
+    },
+    {
+     "n": 7,
+     "user": "approver",
+     "method": "GET",
+     "path": "/api/v1/workflows?page=0&size=20",
+     "status": 200,
+     "ms": 23
+    },
+    {
+     "n": 8,
+     "user": "approver",
+     "method": "POST",
+     "path": "/api/v1/workflows/7d0fa12f-bf89-49af-bfa2-5458142def3b/execute",
+     "status": 200,
+     "ms": 201
+    },
+    {
+     "n": 9,
+     "user": "approver",
+     "method": "GET",
+     "path": "/api/v1/workflows/7d0fa12f-bf89-49af-bfa2-5458142def3b/approvals",
+     "status": 200,
+     "ms": 10
+    },
+    {
+     "n": 10,
+     "user": "approver",
+     "method": "GET",
+     "path": "/api/v1/workflows/7d0fa12f-bf89-49af-bfa2-5458142def3b",
+     "status": 200,
+     "ms": 19
+    },
+    {
+     "n": 11,
+     "user": "approver",
+     "method": "GET",
+     "path": "/api/v1/workflows/7d0fa12f-bf89-49af-bfa2-5458142def3b/tasks?includeOutput=true",
+     "status": 200,
+     "ms": 20
+    },
+    {
+     "n": 12,
+     "user": "approver",
+     "method": "GET",
+     "path": "/api/v1/workflows?page=0&size=20",
+     "status": 200,
+     "ms": 27
+    },
+    {
+     "n": 13,
+     "user": "approver",
+     "method": "POST",
+     "path": "/api/v1/workflows/7d0fa12f-bf89-49af-bfa2-5458142def3b/reject",
+     "status": 200,
+     "ms": 32
+    },
+    {
+     "n": 14,
+     "user": "approver",
+     "method": "GET",
+     "path": "/api/v1/workflows/7d0fa12f-bf89-49af-bfa2-5458142def3b/approvals",
+     "status": 200,
+     "ms": 9
+    },
+    {
+     "n": 15,
+     "user": "approver",
+     "method": "GET",
+     "path": "/api/v1/workflows/7d0fa12f-bf89-49af-bfa2-5458142def3b",
+     "status": 200,
+     "ms": 17
+    },
+    {
+     "n": 16,
+     "user": "approver",
+     "method": "GET",
+     "path": "/api/v1/workflows/7d0fa12f-bf89-49af-bfa2-5458142def3b/tasks?includeOutput=true",
+     "status": 200,
+     "ms": 17
+    },
+    {
+     "n": 17,
+     "user": "approver",
+     "method": "GET",
+     "path": "/api/v1/workflows?page=0&size=20",
+     "status": 200,
+     "ms": 22
+    }
+   ]
+  },
+  {
+   "n": 28,
+   "section": "Rejection and rollback",
+   "title": "Artifacts reverted",
+   "note": "All artifacts are REVERTED; nothing was accepted.",
+   "caption": "Rejection: a rejected approval rolls the workflow back",
+   "file": "shots/28-artifacts-reverted.png",
+   "calls": [
+    {
+     "n": 1,
+     "user": "approver",
+     "method": "GET",
+     "path": "/api/v1/workflows/7d0fa12f-bf89-49af-bfa2-5458142def3b/artifacts?includeContent=true",
+     "status": 200,
+     "ms": 9
+    }
+   ]
+  },
+  {
+   "n": 29,
+   "section": "Safe-stop (security)",
+   "title": "Design approval for a sensitive change",
+   "note": "The architecture marks a SECURITY_SENSITIVE_CHANGE, which needs a human approval before implementation.",
+   "caption": "Security: a request to disable authentication",
+   "file": "shots/29-design-approval-for-a-sensitive-change.png",
+   "calls": [
+    {
+     "n": 1,
+     "user": "approver",
+     "method": "GET",
+     "path": "/api/v1/workflows?page=0&size=20",
+     "status": 200,
+     "ms": 16
+    },
+    {
+     "n": 2,
+     "user": "approver",
+     "method": "POST",
+     "path": "/api/v1/workflows",
+     "status": 201,
+     "ms": 41
+    },
+    {
+     "n": 3,
+     "user": "approver",
+     "method": "GET",
+     "path": "/api/v1/workflows?page=0&size=20",
+     "status": 200,
+     "ms": 33
+    },
+    {
+     "n": 4,
+     "user": "approver",
+     "method": "GET",
+     "path": "/api/v1/workflows/56cbe27a-158f-4d46-bf91-8d5c7e0525d5",
+     "status": 200,
+     "ms": 27
+    },
+    {
+     "n": 5,
+     "user": "approver",
+     "method": "GET",
+     "path": "/api/v1/workflows/56cbe27a-158f-4d46-bf91-8d5c7e0525d5/tasks?includeOutput=true",
+     "status": 200,
+     "ms": 27
+    },
+    {
+     "n": 6,
+     "user": "approver",
+     "method": "GET",
+     "path": "/api/v1/workflows/56cbe27a-158f-4d46-bf91-8d5c7e0525d5/approvals",
+     "status": 200,
+     "ms": 27
+    },
+    {
+     "n": 7,
+     "user": "approver",
+     "method": "GET",
+     "path": "/api/v1/workflows?page=0&size=20",
+     "status": 200,
+     "ms": 47
+    },
+    {
+     "n": 8,
+     "user": "approver",
+     "method": "POST",
+     "path": "/api/v1/workflows/56cbe27a-158f-4d46-bf91-8d5c7e0525d5/execute",
+     "status": 200,
+     "ms": 109
+    },
+    {
+     "n": 9,
+     "user": "approver",
+     "method": "GET",
+     "path": "/api/v1/workflows/56cbe27a-158f-4d46-bf91-8d5c7e0525d5/approvals",
+     "status": 200,
+     "ms": 10
+    },
+    {
+     "n": 10,
+     "user": "approver",
+     "method": "GET",
+     "path": "/api/v1/workflows/56cbe27a-158f-4d46-bf91-8d5c7e0525d5",
+     "status": 200,
+     "ms": 19
+    },
+    {
+     "n": 11,
+     "user": "approver",
+     "method": "GET",
+     "path": "/api/v1/workflows/56cbe27a-158f-4d46-bf91-8d5c7e0525d5/tasks?includeOutput=true",
+     "status": 200,
+     "ms": 19
+    },
+    {
+     "n": 12,
+     "user": "approver",
+     "method": "GET",
+     "path": "/api/v1/workflows?page=0&size=20",
+     "status": 200,
+     "ms": 28
+    }
+   ]
+  },
+  {
+   "n": 30,
+   "section": "Safe-stop (security)",
+   "title": "Safe-stopped on a critical finding",
+   "note": "The review stage found a critical security finding and the workflow stopped (SAFE_STOPPED, SECURITY_CONCERN). The reason is persisted; nothing downstream ran.",
+   "caption": "Critical review finding: the workflow SAFE-STOPS",
+   "file": "shots/30-safe-stopped-on-a-critical-finding.png",
+   "calls": [
+    {
+     "n": 1,
+     "user": "approver",
+     "method": "POST",
+     "path": "/api/v1/workflows/56cbe27a-158f-4d46-bf91-8d5c7e0525d5/approve",
+     "status": 200,
+     "ms": 148
+    },
+    {
+     "n": 2,
+     "user": "approver",
+     "method": "GET",
+     "path": "/api/v1/workflows/56cbe27a-158f-4d46-bf91-8d5c7e0525d5/approvals",
+     "status": 200,
+     "ms": 18
+    },
+    {
+     "n": 3,
+     "user": "approver",
+     "method": "GET",
+     "path": "/api/v1/workflows/56cbe27a-158f-4d46-bf91-8d5c7e0525d5",
+     "status": 200,
+     "ms": 31
+    },
+    {
+     "n": 4,
+     "user": "approver",
+     "method": "GET",
+     "path": "/api/v1/workflows/56cbe27a-158f-4d46-bf91-8d5c7e0525d5/tasks?includeOutput=true",
+     "status": 200,
+     "ms": 32
+    },
+    {
+     "n": 5,
+     "user": "approver",
+     "method": "GET",
+     "path": "/api/v1/workflows?page=0&size=20",
+     "status": 200,
+     "ms": 42
+    }
+   ]
+  },
+  {
+   "n": 31,
+   "section": "Safe-stop (security)",
+   "title": "Engineer cannot resume (403)",
+   "note": "Resuming a safe-stopped workflow requires the APPROVER role and an acknowledgement.",
+   "caption": "Only an approver may resume, with an acknowledgement",
+   "file": "shots/31-engineer-cannot-resume-403.png",
+   "calls": [
+    {
+     "n": 1,
+     "user": "engineer",
+     "method": "GET",
+     "path": "/api/v1/whoami",
+     "status": 200,
+     "ms": 5
+    },
+    {
+     "n": 2,
+     "user": "engineer",
+     "method": "GET",
+     "path": "/api/v1/workflows?page=0&size=20",
+     "status": 200,
+     "ms": 18
+    },
+    {
+     "n": 3,
+     "user": "engineer",
+     "method": "GET",
+     "path": "/api/v1/workflows/56cbe27a-158f-4d46-bf91-8d5c7e0525d5/approvals",
+     "status": 200,
+     "ms": 9
+    },
+    {
+     "n": 4,
+     "user": "engineer",
+     "method": "GET",
+     "path": "/api/v1/workflows/56cbe27a-158f-4d46-bf91-8d5c7e0525d5",
+     "status": 200,
+     "ms": 14
+    },
+    {
+     "n": 5,
+     "user": "engineer",
+     "method": "GET",
+     "path": "/api/v1/workflows/56cbe27a-158f-4d46-bf91-8d5c7e0525d5/tasks?includeOutput=true",
+     "status": 200,
+     "ms": 14
+    },
+    {
+     "n": 6,
+     "user": "engineer",
+     "method": "GET",
+     "path": "/api/v1/workflows?page=0&size=20",
+     "status": 200,
+     "ms": 23
+    },
+    {
+     "n": 7,
+     "user": "engineer",
+     "method": "POST",
+     "path": "/api/v1/workflows/56cbe27a-158f-4d46-bf91-8d5c7e0525d5/execute",
+     "status": 403,
+     "ms": 17
+    },
+    {
+     "n": 8,
+     "user": "engineer",
+     "method": "GET",
+     "path": "/api/v1/workflows/56cbe27a-158f-4d46-bf91-8d5c7e0525d5/approvals",
+     "status": 200,
+     "ms": 18
+    },
+    {
+     "n": 9,
+     "user": "engineer",
+     "method": "GET",
+     "path": "/api/v1/workflows/56cbe27a-158f-4d46-bf91-8d5c7e0525d5",
+     "status": 200,
+     "ms": 19
+    },
+    {
+     "n": 10,
+     "user": "engineer",
+     "method": "GET",
+     "path": "/api/v1/workflows/56cbe27a-158f-4d46-bf91-8d5c7e0525d5/tasks?includeOutput=true",
+     "status": 200,
+     "ms": 28
+    },
+    {
+     "n": 11,
+     "user": "engineer",
+     "method": "GET",
+     "path": "/api/v1/workflows?page=0&size=20",
+     "status": 200,
+     "ms": 40
+    }
+   ]
+  },
+  {
+   "n": 32,
+   "section": "Safe-stop (security)",
+   "title": "Approver resumes: stopped again",
+   "note": "The approver resumed with an acknowledgement; the same policy violation stops it again, proving the guard cannot be bypassed.",
+   "caption": "Only an approver may resume, with an acknowledgement",
+   "file": "shots/32-approver-resumes-stopped-again.png",
+   "calls": [
+    {
+     "n": 1,
+     "user": "approver",
+     "method": "GET",
+     "path": "/api/v1/whoami",
+     "status": 200,
+     "ms": 5
+    },
+    {
+     "n": 2,
+     "user": "approver",
+     "method": "GET",
+     "path": "/api/v1/workflows?page=0&size=20",
+     "status": 200,
+     "ms": 16
+    },
+    {
+     "n": 3,
+     "user": "approver",
+     "method": "GET",
+     "path": "/api/v1/workflows/56cbe27a-158f-4d46-bf91-8d5c7e0525d5/approvals",
+     "status": 200,
+     "ms": 17
+    },
+    {
+     "n": 4,
+     "user": "approver",
+     "method": "GET",
+     "path": "/api/v1/workflows/56cbe27a-158f-4d46-bf91-8d5c7e0525d5",
+     "status": 200,
+     "ms": 27
+    },
+    {
+     "n": 5,
+     "user": "approver",
+     "method": "GET",
+     "path": "/api/v1/workflows/56cbe27a-158f-4d46-bf91-8d5c7e0525d5/tasks?includeOutput=true",
+     "status": 200,
+     "ms": 27
+    },
+    {
+     "n": 6,
+     "user": "approver",
+     "method": "GET",
+     "path": "/api/v1/workflows?page=0&size=20",
+     "status": 200,
+     "ms": 29
+    },
+    {
+     "n": 7,
+     "user": "approver",
+     "method": "POST",
+     "path": "/api/v1/workflows/56cbe27a-158f-4d46-bf91-8d5c7e0525d5/execute",
+     "status": 200,
+     "ms": 60
+    },
+    {
+     "n": 8,
+     "user": "approver",
+     "method": "GET",
+     "path": "/api/v1/workflows/56cbe27a-158f-4d46-bf91-8d5c7e0525d5/approvals",
+     "status": 200,
+     "ms": 18
+    },
+    {
+     "n": 9,
+     "user": "approver",
+     "method": "GET",
+     "path": "/api/v1/workflows/56cbe27a-158f-4d46-bf91-8d5c7e0525d5",
+     "status": 200,
+     "ms": 29
+    },
+    {
+     "n": 10,
+     "user": "approver",
+     "method": "GET",
+     "path": "/api/v1/workflows/56cbe27a-158f-4d46-bf91-8d5c7e0525d5/tasks?includeOutput=true",
+     "status": 200,
+     "ms": 29
+    },
+    {
+     "n": 11,
+     "user": "approver",
+     "method": "GET",
+     "path": "/api/v1/workflows?page=0&size=20",
+     "status": 200,
+     "ms": 41
+    }
+   ]
+  },
+  {
+   "n": 33,
+   "section": "Retry, fallback and fault injection",
+   "title": "Fault injection denied for engineer",
+   "note": "POST /api/v1/admin/fault-injection returned 403; the message names the required ADMIN role.",
+   "caption": "Admin area: engineer is not allowed to inject faults",
+   "file": "shots/33-fault-injection-denied-for-engineer.png",
+   "calls": [
+    {
+     "n": 1,
+     "user": "engineer",
+     "method": "GET",
+     "path": "/api/v1/whoami",
+     "status": 200,
+     "ms": 5
+    },
+    {
+     "n": 2,
+     "user": "engineer",
+     "method": "GET",
+     "path": "/api/v1/workflows?page=0&size=20",
+     "status": 200,
+     "ms": 23
+    },
+    {
+     "n": 3,
+     "user": "engineer",
+     "method": "GET",
+     "path": "/api/v1/admin/fault-injection",
+     "status": 403,
+     "ms": 8
+    },
+    {
+     "n": 4,
+     "user": "engineer",
+     "method": "POST",
+     "path": "/api/v1/admin/fault-injection",
+     "status": 403,
+     "ms": 4
+    },
+    {
+     "n": 5,
+     "user": "engineer",
+     "method": "GET",
+     "path": "/api/v1/admin/fault-injection",
+     "status": 403,
+     "ms": 5
+    }
+   ]
+  },
+  {
+   "n": 34,
+   "section": "Retry, fallback and fault injection",
+   "title": "Fault rule injected",
+   "note": "The next two DECOMPOSE_TASKS calls will fail with a timeout.",
+   "caption": "Admin: make the next 2 task-planning LLM calls time out",
+   "file": "shots/34-fault-rule-injected.png",
+   "calls": [
+    {
+     "n": 1,
+     "user": "admin",
+     "method": "GET",
+     "path": "/api/v1/whoami",
+     "status": 200,
+     "ms": 9
+    },
+    {
+     "n": 2,
+     "user": "admin",
+     "method": "GET",
+     "path": "/api/v1/admin/fault-injection",
+     "status": 200,
+     "ms": 16
+    },
+    {
+     "n": 3,
+     "user": "admin",
+     "method": "GET",
+     "path": "/api/v1/admin/fault-injection",
+     "status": 200,
+     "ms": 5
+    },
+    {
+     "n": 4,
+     "user": "admin",
+     "method": "POST",
+     "path": "/api/v1/admin/fault-injection",
+     "status": 200,
+     "ms": 27
+    },
+    {
+     "n": 5,
+     "user": "admin",
+     "method": "GET",
+     "path": "/api/v1/admin/fault-injection",
+     "status": 200,
+     "ms": 6
+    }
+   ]
+  },
+  {
+   "n": 35,
+   "section": "Retry, fallback and fault injection",
+   "title": "Planning needed 3 attempts",
+   "note": "The planning task shows Attempts = 3: two transient failures were retried and the third attempt succeeded.",
+   "caption": "The workflow retries with exponential backoff (200 ms, 400 ms)",
+   "file": "shots/35-planning-needed-3-attempts.png",
+   "calls": [
+    {
+     "n": 1,
+     "user": "admin",
+     "method": "GET",
+     "path": "/api/v1/workflows?page=0&size=20",
+     "status": 200,
+     "ms": 26
+    },
+    {
+     "n": 2,
+     "user": "admin",
+     "method": "POST",
+     "path": "/api/v1/workflows",
+     "status": 201,
+     "ms": 20
+    },
+    {
+     "n": 3,
+     "user": "admin",
+     "method": "GET",
+     "path": "/api/v1/workflows?page=0&size=20",
+     "status": 200,
+     "ms": 23
+    },
+    {
+     "n": 4,
+     "user": "admin",
+     "method": "GET",
+     "path": "/api/v1/workflows/9ed8d7e0-80b9-40b0-822e-4811f8ce26ca/approvals",
+     "status": 200,
+     "ms": 11
+    },
+    {
+     "n": 5,
+     "user": "admin",
+     "method": "GET",
+     "path": "/api/v1/workflows/9ed8d7e0-80b9-40b0-822e-4811f8ce26ca",
+     "status": 200,
+     "ms": 11
+    },
+    {
+     "n": 6,
+     "user": "admin",
+     "method": "GET",
+     "path": "/api/v1/workflows/9ed8d7e0-80b9-40b0-822e-4811f8ce26ca/tasks?includeOutput=true",
+     "status": 200,
+     "ms": 11
+    },
+    {
+     "n": 7,
+     "user": "admin",
+     "method": "GET",
+     "path": "/api/v1/workflows?page=0&size=20",
+     "status": 200,
+     "ms": 30
+    },
+    {
+     "n": 8,
+     "user": "admin",
+     "method": "POST",
+     "path": "/api/v1/workflows/9ed8d7e0-80b9-40b0-822e-4811f8ce26ca/execute",
+     "status": 200,
+     "ms": 939
+    },
+    {
+     "n": 9,
+     "user": "admin",
+     "method": "GET",
+     "path": "/api/v1/workflows/9ed8d7e0-80b9-40b0-822e-4811f8ce26ca",
+     "status": 200,
+     "ms": 19
+    },
+    {
+     "n": 10,
+     "user": "admin",
+     "method": "GET",
+     "path": "/api/v1/workflows/9ed8d7e0-80b9-40b0-822e-4811f8ce26ca/approvals",
+     "status": 200,
+     "ms": 19
+    },
+    {
+     "n": 11,
+     "user": "admin",
+     "method": "GET",
+     "path": "/api/v1/workflows/9ed8d7e0-80b9-40b0-822e-4811f8ce26ca/tasks?includeOutput=true",
+     "status": 200,
+     "ms": 20
+    },
+    {
+     "n": 12,
+     "user": "admin",
+     "method": "GET",
+     "path": "/api/v1/workflows?page=0&size=20",
+     "status": 200,
+     "ms": 42
+    }
+   ]
+  },
+  {
+   "n": 36,
+   "section": "Retry, fallback and fault injection",
+   "title": "Retry audit events",
+   "note": "TASK_RETRY_SCHEDULED events record each attempt and the backoff (200 ms, then 400 ms).",
+   "caption": "The workflow retries with exponential backoff (200 ms, 400 ms)",
+   "file": "shots/36-retry-audit-events.png",
+   "calls": [
+    {
+     "n": 1,
+     "user": "admin",
+     "method": "GET",
+     "path": "/api/v1/audit/workflows/9ed8d7e0-80b9-40b0-822e-4811f8ce26ca",
+     "status": 200,
+     "ms": 9
+    }
+   ]
+  },
+  {
+   "n": 37,
+   "section": "Dynamic replanning",
+   "title": "Low-impact replan applied",
+   "note": "POST /replan: only documentation and everything downstream are marked for re-execution; completed upstream work is preserved. No approval is needed for a low-impact change.",
+   "caption": "Replanning: documentation changed",
+   "file": "shots/37-low-impact-replan-applied.png",
+   "calls": [
+    {
+     "n": 1,
+     "user": "admin",
+     "method": "POST",
+     "path": "/api/v1/workflows/9ed8d7e0-80b9-40b0-822e-4811f8ce26ca/replan",
+     "status": 200,
+     "ms": 86
+    },
+    {
+     "n": 2,
+     "user": "admin",
+     "method": "GET",
+     "path": "/api/v1/workflows/9ed8d7e0-80b9-40b0-822e-4811f8ce26ca",
+     "status": 200,
+     "ms": 11
+    },
+    {
+     "n": 3,
+     "user": "admin",
+     "method": "GET",
+     "path": "/api/v1/workflows/9ed8d7e0-80b9-40b0-822e-4811f8ce26ca/approvals",
+     "status": 200,
+     "ms": 20
+    },
+    {
+     "n": 4,
+     "user": "admin",
+     "method": "GET",
+     "path": "/api/v1/workflows/9ed8d7e0-80b9-40b0-822e-4811f8ce26ca/tasks?includeOutput=true",
+     "status": 200,
+     "ms": 20
+    },
+    {
+     "n": 5,
+     "user": "admin",
+     "method": "GET",
+     "path": "/api/v1/workflows?page=0&size=20",
+     "status": 200,
+     "ms": 27
+    }
+   ]
+  },
+  {
+   "n": 38,
+   "section": "Dynamic replanning",
+   "title": "Only stale tasks re-ran",
+   "note": "The workflow re-ran just the affected tasks (revision 2) and paused again at the final approval.",
+   "caption": "Replanning: documentation changed",
+   "file": "shots/38-only-stale-tasks-re-ran.png",
+   "calls": [
+    {
+     "n": 1,
+     "user": "admin",
+     "method": "POST",
+     "path": "/api/v1/workflows/9ed8d7e0-80b9-40b0-822e-4811f8ce26ca/execute",
+     "status": 200,
+     "ms": 112
+    },
+    {
+     "n": 2,
+     "user": "admin",
+     "method": "GET",
+     "path": "/api/v1/workflows/9ed8d7e0-80b9-40b0-822e-4811f8ce26ca",
+     "status": 200,
+     "ms": 17
+    },
+    {
+     "n": 3,
+     "user": "admin",
+     "method": "GET",
+     "path": "/api/v1/workflows/9ed8d7e0-80b9-40b0-822e-4811f8ce26ca/approvals",
+     "status": 200,
+     "ms": 28
+    },
+    {
+     "n": 4,
+     "user": "admin",
+     "method": "GET",
+     "path": "/api/v1/workflows/9ed8d7e0-80b9-40b0-822e-4811f8ce26ca/tasks?includeOutput=true",
+     "status": 200,
+     "ms": 29
+    },
+    {
+     "n": 5,
+     "user": "admin",
+     "method": "GET",
+     "path": "/api/v1/workflows?page=0&size=20",
+     "status": 200,
+     "ms": 44
+    }
+   ]
+  },
+  {
+   "n": 39,
+   "section": "Dynamic replanning",
+   "title": "High-impact replan waits for approval",
+   "note": "Nothing changes until a human approves the proposal; the exact impact (impacted and preserved tasks) is shown for review.",
+   "caption": "High-impact architecture change needs approval",
+   "file": "shots/39-high-impact-replan-waits-for-approval.png",
+   "calls": [
+    {
+     "n": 1,
+     "user": "admin",
+     "method": "POST",
+     "path": "/api/v1/workflows/9ed8d7e0-80b9-40b0-822e-4811f8ce26ca/replan",
+     "status": 200,
+     "ms": 31
+    },
+    {
+     "n": 2,
+     "user": "admin",
+     "method": "GET",
+     "path": "/api/v1/workflows/9ed8d7e0-80b9-40b0-822e-4811f8ce26ca/approvals",
+     "status": 200,
+     "ms": 14
+    },
+    {
+     "n": 3,
+     "user": "admin",
+     "method": "GET",
+     "path": "/api/v1/workflows/9ed8d7e0-80b9-40b0-822e-4811f8ce26ca",
+     "status": 200,
+     "ms": 16
+    },
+    {
+     "n": 4,
+     "user": "admin",
+     "method": "GET",
+     "path": "/api/v1/workflows/9ed8d7e0-80b9-40b0-822e-4811f8ce26ca/tasks?includeOutput=true",
+     "status": 200,
+     "ms": 26
+    },
+    {
+     "n": 5,
+     "user": "admin",
+     "method": "GET",
+     "path": "/api/v1/workflows?page=0&size=20",
+     "status": 200,
+     "ms": 36
+    }
+   ]
+  },
+  {
+   "n": 40,
+   "section": "Dynamic replanning",
+   "title": "Replan approved, decisions superseded",
+   "note": "After approval the architecture and its dependants re-ran. Earlier decisions are struck through (superseded) but kept for traceability, never silently overwritten.",
+   "caption": "High-impact architecture change needs approval",
+   "file": "shots/40-replan-approved-decisions-superseded.png",
+   "calls": [
+    {
+     "n": 1,
+     "user": "admin",
+     "method": "POST",
+     "path": "/api/v1/workflows/9ed8d7e0-80b9-40b0-822e-4811f8ce26ca/approve",
+     "status": 200,
+     "ms": 164
+    },
+    {
+     "n": 2,
+     "user": "admin",
+     "method": "GET",
+     "path": "/api/v1/workflows/9ed8d7e0-80b9-40b0-822e-4811f8ce26ca",
+     "status": 200,
+     "ms": 11
+    },
+    {
+     "n": 3,
+     "user": "admin",
+     "method": "GET",
+     "path": "/api/v1/workflows/9ed8d7e0-80b9-40b0-822e-4811f8ce26ca/tasks?includeOutput=true",
+     "status": 200,
+     "ms": 19
+    },
+    {
+     "n": 4,
+     "user": "admin",
+     "method": "GET",
+     "path": "/api/v1/workflows/9ed8d7e0-80b9-40b0-822e-4811f8ce26ca/approvals",
+     "status": 200,
+     "ms": 20
+    },
+    {
+     "n": 5,
+     "user": "admin",
+     "method": "GET",
+     "path": "/api/v1/workflows?page=0&size=20",
+     "status": 200,
+     "ms": 31
+    },
+    {
+     "n": 6,
+     "user": "admin",
+     "method": "GET",
+     "path": "/api/v1/workflows/9ed8d7e0-80b9-40b0-822e-4811f8ce26ca/decisions",
+     "status": 200,
+     "ms": 9
+    }
+   ]
+  },
+  {
+   "n": 41,
+   "section": "Dynamic replanning",
+   "title": "Revisions after replan",
+   "note": "architecture now shows revision 2 while requirements and planning remain revision 1 (preserved).",
+   "caption": "High-impact architecture change needs approval",
+   "file": "shots/41-revisions-after-replan.png",
+   "calls": []
+  },
+  {
+   "n": 42,
+   "section": "Observability",
+   "title": "Metrics dashboard",
+   "note": "GET /api/v1/metrics/summary: success and failure rate, retries, rollbacks, safe-stops, end-to-end latency, approval wait, task success rate and MTTR, all derived from stored data.",
+   "caption": "Metrics computed from the persisted workflow history",
+   "file": "shots/42-metrics-dashboard.png",
+   "calls": [
+    {
+     "n": 1,
+     "user": "approver",
+     "method": "GET",
+     "path": "/api/v1/whoami",
+     "status": 200,
+     "ms": 6
+    },
+    {
+     "n": 2,
+     "user": "approver",
+     "method": "GET",
+     "path": "/api/v1/workflows?page=0&size=20",
+     "status": 200,
+     "ms": 23
+    },
+    {
+     "n": 3,
+     "user": "approver",
+     "method": "GET",
+     "path": "/api/v1/metrics/summary",
+     "status": 200,
+     "ms": 29
+    },
+    {
+     "n": 4,
+     "user": "approver",
+     "method": "GET",
+     "path": "/api/v1/workflows?page=0&size=6",
+     "status": 200,
+     "ms": 27
+    }
+   ]
+  },
+  {
+   "n": 43,
+   "section": "Run all flows from the browser",
+   "title": "Run all flows: ready",
+   "note": "One button executes every API flow with the engineer, approver and admin users.",
+   "caption": "Run every API flow from the browser (about 1 minute)",
+   "file": "shots/43-run-all-flows-ready.png",
+   "calls": [
+    {
+     "n": 1,
+     "user": "approver",
+     "method": "GET",
+     "path": "/api/v1/whoami",
+     "status": 200,
+     "ms": 13
+    },
+    {
+     "n": 2,
+     "user": "approver",
+     "method": "GET",
+     "path": "/api/v1/metrics/summary",
+     "status": 200,
+     "ms": 16
+    },
+    {
+     "n": 3,
+     "user": "approver",
+     "method": "GET",
+     "path": "/api/v1/workflows?page=0&size=6",
+     "status": 200,
+     "ms": 24
+    }
+   ]
+  },
+  {
+   "n": 44,
+   "section": "Run all flows from the browser",
+   "title": "Run all flows: in progress",
+   "note": "Progress bar and live results while the flows execute.",
+   "caption": "Running all flows ...",
+   "file": "shots/44-run-all-flows-in-progress.png",
+   "calls": [
+    {
+     "n": 1,
+     "user": "admin",
+     "method": "DELETE",
+     "path": "/api/v1/admin/fault-injection",
+     "status": 200,
+     "ms": 8
+    },
+    {
+     "n": 2,
+     "user": "engineer",
+     "method": "GET",
+     "path": "/api/v1/health",
+     "status": 200,
+     "ms": 5
+    },
+    {
+     "n": 3,
+     "user": "approver",
+     "method": "GET",
+     "path": "/api/v1/whoami",
+     "status": 200,
+     "ms": 7
+    },
+    {
+     "n": 4,
+     "user": "engineer",
+     "method": "POST",
+     "path": "/api/v1/urls",
+     "status": 201,
+     "ms": 11
+    },
+    {
+     "n": 5,
+     "user": "engineer",
+     "method": "POST",
+     "path": "/api/v1/urls",
+     "status": 201,
+     "ms": 13
+    },
+    {
+     "n": 6,
+     "user": "engineer",
+     "method": "POST",
+     "path": "/api/v1/urls",
+     "status": 409,
+     "ms": 11
+    },
+    {
+     "n": 7,
+     "user": "engineer",
+     "method": "POST",
+     "path": "/api/v1/urls",
+     "status": 400,
+     "ms": 11
+    },
+    {
+     "n": 8,
+     "user": "engineer",
+     "method": "POST",
+     "path": "/api/v1/urls",
+     "status": 400,
+     "ms": 16
+    },
+    {
+     "n": 9,
+     "user": "engineer",
+     "method": "POST",
+     "path": "/api/v1/urls",
+     "status": 400,
+     "ms": 16
+    },
+    {
+     "n": 10,
+     "user": "anonymous",
+     "method": "POST",
+     "path": "/api/v1/urls",
+     "status": 401,
+     "ms": 0
+    },
+    {
+     "n": 11,
+     "user": "public",
+     "method": "GET",
+     "path": "/api/v1/urls/ui-446856",
+     "status": 302,
+     "ms": 29
+    },
+    {
+     "n": 12,
+     "user": "public",
+     "method": "GET",
+     "path": "/api/v1/urls/ui-446856",
+     "status": 302,
+     "ms": 26
+    },
+    {
+     "n": 13,
+     "user": "engineer",
+     "method": "GET",
+     "path": "/api/v1/urls/ui-446856/analytics",
+     "status": 200,
+     "ms": 16
+    },
+    {
+     "n": 14,
+     "user": "engineer",
+     "method": "GET",
+     "path": "/api/v1/urls?page=0&size=5",
+     "status": 200,
+     "ms": 22
+    },
+    {
+     "n": 15,
+     "user": "engineer",
+     "method": "GET",
+     "path": "/api/v1/urls/ui-446856/details",
+     "status": 200,
+     "ms": 17
+    },
+    {
+     "n": 16,
+     "user": "public",
+     "method": "GET",
+     "path": "/api/v1/urls/nope-nope-x",
+     "status": 404,
+     "ms": 19
+    },
+    {
+     "n": 17,
+     "user": "engineer",
+     "method": "DELETE",
+     "path": "/api/v1/urls/ui-446856",
+     "status": 204,
+     "ms": 17
+    },
+    {
+     "n": 18,
+     "user": "public",
+     "method": "GET",
+     "path": "/api/v1/urls/ui-446856",
+     "status": 410,
+     "ms": 6
+    },
+    {
+     "n": 19,
+     "user": "engineer",
+     "method": "PUT",
+     "path": "/api/v1/urls/ui-446856/status",
+     "status": 200,
+     "ms": 14
+    },
+    {
+     "n": 20,
+     "user": "public",
+     "method": "GET",
+     "path": "/api/v1/urls/ui-446856",
+     "status": 302,
+     "ms": 15
+    },
+    {
+     "n": 21,
+     "user": "engineer",
+     "method": "POST",
+     "path": "/api/v1/urls",
+     "status": 201,
+     "ms": 20
+    }
+   ]
+  },
+  {
+   "n": 45,
+   "section": "Run all flows from the browser",
+   "title": "Run all flows: result summary",
+   "note": "Every check passed. The page made all of these API calls itself.",
+   "caption": "Result of the full API run",
+   "file": "shots/45-run-all-flows-result-summary.png",
+   "calls": [
+    {
+     "n": 1,
+     "user": "public",
+     "method": "GET",
+     "path": "/api/v1/urls/soon-671438",
+     "status": 410,
+     "ms": 10
+    },
+    {
+     "n": 2,
+     "user": "engineer",
+     "method": "POST",
+     "path": "/api/v1/workflows",
+     "status": 201,
+     "ms": 41
+    },
+    {
+     "n": 3,
+     "user": "engineer",
+     "method": "POST",
+     "path": "/api/v1/workflows/d2e76920-510c-4c1b-8589-90357af22eb0/execute",
+     "status": 200,
+     "ms": 228
+    },
+    {
+     "n": 4,
+     "user": "engineer",
+     "method": "GET",
+     "path": "/api/v1/workflows/d2e76920-510c-4c1b-8589-90357af22eb0/tasks?includeOutput=true",
+     "status": 200,
+     "ms": 10
+    },
+    {
+     "n": 5,
+     "user": "engineer",
+     "method": "GET",
+     "path": "/api/v1/workflows/d2e76920-510c-4c1b-8589-90357af22eb0/tasks?includeOutput=true",
+     "status": 200,
+     "ms": 12
+    },
+    {
+     "n": 6,
+     "user": "engineer",
+     "method": "POST",
+     "path": "/api/v1/workflows/d2e76920-510c-4c1b-8589-90357af22eb0/approve",
+     "status": 403,
+     "ms": 12
+    },
+    {
+     "n": 7,
+     "user": "approver",
+     "method": "POST",
+     "path": "/api/v1/workflows/d2e76920-510c-4c1b-8589-90357af22eb0/approve",
+     "status": 200,
+     "ms": 285
+    },
+    {
+     "n": 8,
+     "user": "engineer",
+     "method": "GET",
+     "path": "/api/v1/workflows/d2e76920-510c-4c1b-8589-90357af22eb0/summary",
+     "status": 200,
+     "ms": 17
+    },
+    {
+     "n": 9,
+     "user": "engineer",
+     "method": "GET",
+     "path": "/api/v1/workflows/d2e76920-510c-4c1b-8589-90357af22eb0/artifacts",
+     "status": 200,
+     "ms": 10
+    },
+    {
+     "n": 10,
+     "user": "engineer",
+     "method": "GET",
+     "path": "/api/v1/workflows/d2e76920-510c-4c1b-8589-90357af22eb0/decisions",
+     "status": 200,
+     "ms": 9
+    },
+    {
+     "n": 11,
+     "user": "engineer",
+     "method": "GET",
+     "path": "/api/v1/workflows/d2e76920-510c-4c1b-8589-90357af22eb0/approvals",
+     "status": 200,
+     "ms": 15
+    },
+    {
+     "n": 12,
+     "user": "engineer",
+     "method": "GET",
+     "path": "/api/v1/audit/workflows/d2e76920-510c-4c1b-8589-90357af22eb0",
+     "status": 200,
+     "ms": 14
+    },
+    {
+     "n": 13,
+     "user": "engineer",
+     "method": "GET",
+     "path": "/api/v1/metrics/workflows/d2e76920-510c-4c1b-8589-90357af22eb0",
+     "status": 200,
+     "ms": 20
+    },
+    {
+     "n": 14,
+     "user": "engineer",
+     "method": "POST",
+     "path": "/api/v1/workflows",
+     "status": 201,
+     "ms": 136
+    },
+    {
+     "n": 15,
+     "user": "engineer",
+     "method": "POST",
+     "path": "/api/v1/workflows/74b3ad5d-8cf0-49be-8d0f-9d281bacbf2d/execute",
+     "status": 200,
+     "ms": 1517
+    },
+    {
+     "n": 16,
+     "user": "engineer",
+     "method": "GET",
+     "path": "/api/v1/workflows/74b3ad5d-8cf0-49be-8d0f-9d281bacbf2d/tasks?includeOutput=true",
+     "status": 200,
+     "ms": 25
+    },
+    {
+     "n": 17,
+     "user": "approver",
+     "method": "POST",
+     "path": "/api/v1/workflows/74b3ad5d-8cf0-49be-8d0f-9d281bacbf2d/approve",
+     "status": 200,
+     "ms": 617
+    },
+    {
+     "n": 18,
+     "user": "engineer",
+     "method": "POST",
+     "path": "/api/v1/workflows",
+     "status": 201,
+     "ms": 73
+    },
+    {
+     "n": 19,
+     "user": "engineer",
+     "method": "POST",
+     "path": "/api/v1/workflows/9684f463-d627-4443-a08e-6246ea654b88/execute",
+     "status": 200,
+     "ms": 306
+    },
+    {
+     "n": 20,
+     "user": "engineer",
+     "method": "GET",
+     "path": "/api/v1/workflows/9684f463-d627-4443-a08e-6246ea654b88/tasks?includeOutput=true",
+     "status": 200,
+     "ms": 23
+    },
+    {
+     "n": 21,
+     "user": "engineer",
+     "method": "GET",
+     "path": "/api/v1/workflows/9684f463-d627-4443-a08e-6246ea654b88/tasks?includeOutput=true",
+     "status": 200,
+     "ms": 13
+    },
+    {
+     "n": 22,
+     "user": "approver",
+     "method": "POST",
+     "path": "/api/v1/workflows/9684f463-d627-4443-a08e-6246ea654b88/approve",
+     "status": 200,
+     "ms": 381
+    },
+    {
+     "n": 23,
+     "user": "engineer",
+     "method": "GET",
+     "path": "/api/v1/workflows/9684f463-d627-4443-a08e-6246ea654b88/tasks?includeOutput=true",
+     "status": 200,
+     "ms": 17
+    },
+    {
+     "n": 24,
+     "user": "engineer",
+     "method": "GET",
+     "path": "/api/v1/workflows/9684f463-d627-4443-a08e-6246ea654b88/tasks?includeOutput=true",
+     "status": 200,
+     "ms": 17
+    },
+    {
+     "n": 25,
+     "user": "approver",
+     "method": "POST",
+     "path": "/api/v1/workflows/9684f463-d627-4443-a08e-6246ea654b88/approve",
+     "status": 200,
+     "ms": 640
+    },
+    {
+     "n": 26,
+     "user": "approver",
+     "method": "POST",
+     "path": "/api/v1/workflows/9684f463-d627-4443-a08e-6246ea654b88/approve",
+     "status": 200,
+     "ms": 366
+    },
+    {
+     "n": 27,
+     "user": "engineer",
+     "method": "GET",
+     "path": "/api/v1/workflows/9684f463-d627-4443-a08e-6246ea654b88/tasks?includeOutput=true",
+     "status": 200,
+     "ms": 17
+    },
+    {
+     "n": 28,
+     "user": "engineer",
+     "method": "POST",
+     "path": "/api/v1/workflows",
+     "status": 201,
+     "ms": 79
+    },
+    {
+     "n": 29,
+     "user": "engineer",
+     "method": "POST",
+     "path": "/api/v1/workflows/da97101a-5c43-4907-8de5-bd92e7ea6a20/execute",
+     "status": 200,
+     "ms": 793
+    },
+    {
+     "n": 30,
+     "user": "engineer",
+     "method": "POST",
+     "path": "/api/v1/workflows/da97101a-5c43-4907-8de5-bd92e7ea6a20/reject",
+     "status": 403,
+     "ms": 13
+    },
+    {
+     "n": 31,
+     "user": "approver",
+     "method": "POST",
+     "path": "/api/v1/workflows/da97101a-5c43-4907-8de5-bd92e7ea6a20/reject",
+     "status": 200,
+     "ms": 113
+    },
+    {
+     "n": 32,
+     "user": "engineer",
+     "method": "GET",
+     "path": "/api/v1/workflows/da97101a-5c43-4907-8de5-bd92e7ea6a20/artifacts",
+     "status": 200,
+     "ms": 24
+    },
+    {
+     "n": 33,
+     "user": "engineer",
+     "method": "POST",
+     "path": "/api/v1/workflows/da97101a-5c43-4907-8de5-bd92e7ea6a20/execute",
+     "status": 409,
+     "ms": 26
+    },
+    {
+     "n": 34,
+     "user": "engineer",
+     "method": "POST",
+     "path": "/api/v1/workflows",
+     "status": 201,
+     "ms": 96
+    },
+    {
+     "n": 35,
+     "user": "engineer",
+     "method": "POST",
+     "path": "/api/v1/workflows/3be1d4e9-7e5c-49f9-96c1-3b0b80320026/execute",
+     "status": 200,
+     "ms": 592
+    },
+    {
+     "n": 36,
+     "user": "approver",
+     "method": "POST",
+     "path": "/api/v1/workflows/3be1d4e9-7e5c-49f9-96c1-3b0b80320026/approve",
+     "status": 200,
+     "ms": 517
+    },
+    {
+     "n": 37,
+     "user": "engineer",
+     "method": "POST",
+     "path": "/api/v1/workflows/3be1d4e9-7e5c-49f9-96c1-3b0b80320026/execute",
+     "status": 403,
+     "ms": 23
+    },
+    {
+     "n": 38,
+     "user": "approver",
+     "method": "POST",
+     "path": "/api/v1/workflows/3be1d4e9-7e5c-49f9-96c1-3b0b80320026/execute",
+     "status": 400,
+     "ms": 28
+    },
+    {
+     "n": 39,
+     "user": "approver",
+     "method": "POST",
+     "path": "/api/v1/workflows/3be1d4e9-7e5c-49f9-96c1-3b0b80320026/execute",
+     "status": 200,
+     "ms": 171
+    },
+    {
+     "n": 40,
+     "user": "admin",
+     "method": "POST",
+     "path": "/api/v1/admin/fault-injection",
+     "status": 200,
+     "ms": 37
+    },
+    {
+     "n": 41,
+     "user": "engineer",
+     "method": "POST",
+     "path": "/api/v1/workflows",
+     "status": 201,
+     "ms": 90
+    },
+    {
+     "n": 42,
+     "user": "engineer",
+     "method": "POST",
+     "path": "/api/v1/workflows/c056934e-4305-47c4-b317-8ab56b0dee8f/execute",
+     "status": 200,
+     "ms": 1514
+    },
+    {
+     "n": 43,
+     "user": "engineer",
+     "method": "GET",
+     "path": "/api/v1/workflows/c056934e-4305-47c4-b317-8ab56b0dee8f/tasks?includeOutput=true",
+     "status": 200,
+     "ms": 15
+    },
+    {
+     "n": 44,
+     "user": "engineer",
+     "method": "GET",
+     "path": "/api/v1/audit/workflows/c056934e-4305-47c4-b317-8ab56b0dee8f",
+     "status": 200,
+     "ms": 15
+    },
+    {
+     "n": 45,
+     "user": "admin",
+     "method": "POST",
+     "path": "/api/v1/admin/fault-injection",
+     "status": 200,
+     "ms": 25
+    },
+    {
+     "n": 46,
+     "user": "engineer",
+     "method": "POST",
+     "path": "/api/v1/workflows",
+     "status": 201,
+     "ms": 46
+    },
+    {
+     "n": 47,
+     "user": "engineer",
+     "method": "POST",
+     "path": "/api/v1/workflows/da7d4a51-32d6-4ce1-b239-7503eb11dd85/execute",
+     "status": 200,
+     "ms": 2147
+    },
+    {
+     "n": 48,
+     "user": "admin",
+     "method": "DELETE",
+     "path": "/api/v1/admin/fault-injection",
+     "status": 200,
+     "ms": 6
+    },
+    {
+     "n": 49,
+     "user": "engineer",
+     "method": "GET",
+     "path": "/api/v1/workflows/da7d4a51-32d6-4ce1-b239-7503eb11dd85/tasks?includeOutput=true",
+     "status": 200,
+     "ms": 10
+    },
+    {
+     "n": 50,
+     "user": "admin",
+     "method": "POST",
+     "path": "/api/v1/admin/fault-injection",
+     "status": 200,
+     "ms": 26
+    },
+    {
+     "n": 51,
+     "user": "engineer",
+     "method": "POST",
+     "path": "/api/v1/workflows",
+     "status": 201,
+     "ms": 41
+    },
+    {
+     "n": 52,
+     "user": "engineer",
+     "method": "POST",
+     "path": "/api/v1/workflows/11119d7b-01c0-4c60-89a6-abb7b49b8434/execute",
+     "status": 200,
+     "ms": 1682
+    },
+    {
+     "n": 53,
+     "user": "admin",
+     "method": "DELETE",
+     "path": "/api/v1/admin/fault-injection",
+     "status": 200,
+     "ms": 7
+    },
+    {
+     "n": 54,
+     "user": "approver",
+     "method": "POST",
+     "path": "/api/v1/workflows/11119d7b-01c0-4c60-89a6-abb7b49b8434/execute",
+     "status": 200,
+     "ms": 1159
+    },
+    {
+     "n": 55,
+     "user": "approver",
+     "method": "POST",
+     "path": "/api/v1/workflows/11119d7b-01c0-4c60-89a6-abb7b49b8434/approve",
+     "status": 200,
+     "ms": 592
+    },
+    {
+     "n": 56,
+     "user": "admin",
+     "method": "POST",
+     "path": "/api/v1/admin/fault-injection",
+     "status": 200,
+     "ms": 67
+    },
+    {
+     "n": 57,
+     "user": "engineer",
+     "method": "POST",
+     "path": "/api/v1/workflows",
+     "status": 201,
+     "ms": 103
+    },
+    {
+     "n": 58,
+     "user": "engineer",
+     "method": "POST",
+     "path": "/api/v1/workflows/332a2671-9215-49b2-967c-f5987f4cd962/execute",
+     "status": 200,
+     "ms": 181
+    },
+    {
+     "n": 59,
+     "user": "admin",
+     "method": "DELETE",
+     "path": "/api/v1/admin/fault-injection",
+     "status": 200,
+     "ms": 8
+    },
+    {
+     "n": 60,
+     "user": "engineer",
+     "method": "GET",
+     "path": "/api/v1/workflows/332a2671-9215-49b2-967c-f5987f4cd962/tasks?includeOutput=true",
+     "status": 200,
+     "ms": 13
+    },
+    {
+     "n": 61,
+     "user": "admin",
+     "method": "POST",
+     "path": "/api/v1/admin/fault-injection",
+     "status": 200,
+     "ms": 43
+    },
+    {
+     "n": 62,
+     "user": "engineer",
+     "method": "POST",
+     "path": "/api/v1/workflows",
+     "status": 201,
+     "ms": 62
+    },
+    {
+     "n": 63,
+     "user": "engineer",
+     "method": "POST",
+     "path": "/api/v1/workflows/9c555b57-fb36-4553-9406-38dc869a6a8f/execute",
+     "status": 200,
+     "ms": 750
+    },
+    {
+     "n": 64,
+     "user": "admin",
+     "method": "DELETE",
+     "path": "/api/v1/admin/fault-injection",
+     "status": 200,
+     "ms": 17
+    },
+    {
+     "n": 65,
+     "user": "engineer",
+     "method": "GET",
+     "path": "/api/v1/workflows/9c555b57-fb36-4553-9406-38dc869a6a8f/artifacts?includeContent=true",
+     "status": 200,
+     "ms": 19
+    },
+    {
+     "n": 66,
+     "user": "engineer",
+     "method": "POST",
+     "path": "/api/v1/workflows",
+     "status": 201,
+     "ms": 77
+    },
+    {
+     "n": 67,
+     "user": "engineer",
+     "method": "POST",
+     "path": "/api/v1/workflows/3eddf5a2-ad58-45ce-96e0-b7a1e968f78a/stop",
+     "status": 200,
+     "ms": 79
+    },
+    {
+     "n": 68,
+     "user": "approver",
+     "method": "POST",
+     "path": "/api/v1/workflows/3eddf5a2-ad58-45ce-96e0-b7a1e968f78a/execute",
+     "status": 200,
+     "ms": 1154
+    },
+    {
+     "n": 69,
+     "user": "approver",
+     "method": "POST",
+     "path": "/api/v1/workflows/3eddf5a2-ad58-45ce-96e0-b7a1e968f78a/approve",
+     "status": 200,
+     "ms": 548
+    },
+    {
+     "n": 70,
+     "user": "engineer",
+     "method": "POST",
+     "path": "/api/v1/workflows",
+     "status": 201,
+     "ms": 59
+    },
+    {
+     "n": 71,
+     "user": "engineer",
+     "method": "POST",
+     "path": "/api/v1/workflows/e6f684b0-f51c-4a35-8988-ca25b6f35e80/cancel",
+     "status": 200,
+     "ms": 81
+    },
+    {
+     "n": 72,
+     "user": "engineer",
+     "method": "POST",
+     "path": "/api/v1/workflows/e6f684b0-f51c-4a35-8988-ca25b6f35e80/execute",
+     "status": 409,
+     "ms": 12
+    },
+    {
+     "n": 73,
+     "user": "engineer",
+     "method": "POST",
+     "path": "/api/v1/workflows",
+     "status": 201,
+     "ms": 46
+    },
+    {
+     "n": 74,
+     "user": "engineer",
+     "method": "POST",
+     "path": "/api/v1/workflows/d1aadeb0-85f7-4f69-96fa-86edb5a19a25/execute",
+     "status": 200,
+     "ms": 1215
+    },
+    {
+     "n": 75,
+     "user": "engineer",
+     "method": "POST",
+     "path": "/api/v1/workflows/d1aadeb0-85f7-4f69-96fa-86edb5a19a25/replan",
+     "status": 400,
+     "ms": 13
+    },
+    {
+     "n": 76,
+     "user": "engineer",
+     "method": "POST",
+     "path": "/api/v1/workflows/d1aadeb0-85f7-4f69-96fa-86edb5a19a25/replan",
+     "status": 422,
+     "ms": 65
+    },
+    {
+     "n": 77,
+     "user": "engineer",
+     "method": "POST",
+     "path": "/api/v1/workflows/d1aadeb0-85f7-4f69-96fa-86edb5a19a25/replan",
+     "status": 200,
+     "ms": 185
+    },
+    {
+     "n": 78,
+     "user": "engineer",
+     "method": "POST",
+     "path": "/api/v1/workflows/d1aadeb0-85f7-4f69-96fa-86edb5a19a25/execute",
+     "status": 200,
+     "ms": 279
+    },
+    {
+     "n": 79,
+     "user": "engineer",
+     "method": "GET",
+     "path": "/api/v1/workflows/d1aadeb0-85f7-4f69-96fa-86edb5a19a25/tasks?includeOutput=true",
+     "status": 200,
+     "ms": 17
+    },
+    {
+     "n": 80,
+     "user": "engineer",
+     "method": "GET",
+     "path": "/api/v1/workflows/d1aadeb0-85f7-4f69-96fa-86edb5a19a25/tasks?includeOutput=true",
+     "status": 200,
+     "ms": 14
+    },
+    {
+     "n": 81,
+     "user": "engineer",
+     "method": "POST",
+     "path": "/api/v1/workflows/d1aadeb0-85f7-4f69-96fa-86edb5a19a25/replan",
+     "status": 200,
+     "ms": 106
+    },
+    {
+     "n": 82,
+     "user": "engineer",
+     "method": "GET",
+     "path": "/api/v1/workflows/d1aadeb0-85f7-4f69-96fa-86edb5a19a25/tasks?includeOutput=true",
+     "status": 200,
+     "ms": 24
+    },
+    {
+     "n": 83,
+     "user": "engineer",
+     "method": "POST",
+     "path": "/api/v1/workflows/d1aadeb0-85f7-4f69-96fa-86edb5a19a25/execute",
+     "status": 409,
+     "ms": 21
+    },
+    {
+     "n": 84,
+     "user": "approver",
+     "method": "POST",
+     "path": "/api/v1/workflows/d1aadeb0-85f7-4f69-96fa-86edb5a19a25/approve",
+     "status": 200,
+     "ms": 944
+    },
+    {
+     "n": 85,
+     "user": "engineer",
+     "method": "GET",
+     "path": "/api/v1/workflows/d1aadeb0-85f7-4f69-96fa-86edb5a19a25/tasks?includeOutput=true",
+     "status": 200,
+     "ms": 16
+    },
+    {
+     "n": 86,
+     "user": "engineer",
+     "method": "GET",
+     "path": "/api/v1/workflows/d1aadeb0-85f7-4f69-96fa-86edb5a19a25/tasks?includeOutput=true",
+     "status": 200,
+     "ms": 14
+    },
+    {
+     "n": 87,
+     "user": "engineer",
+     "method": "GET",
+     "path": "/api/v1/workflows/d1aadeb0-85f7-4f69-96fa-86edb5a19a25/decisions",
+     "status": 200,
+     "ms": 33
+    },
+    {
+     "n": 88,
+     "user": "engineer",
+     "method": "POST",
+     "path": "/api/v1/workflows/d1aadeb0-85f7-4f69-96fa-86edb5a19a25/replan",
+     "status": 200,
+     "ms": 42
+    },
+    {
+     "n": 89,
+     "user": "approver",
+     "method": "POST",
+     "path": "/api/v1/workflows/d1aadeb0-85f7-4f69-96fa-86edb5a19a25/reject",
+     "status": 200,
+     "ms": 29
+    },
+    {
+     "n": 90,
+     "user": "engineer",
+     "method": "GET",
+     "path": "/api/v1/workflows/d1aadeb0-85f7-4f69-96fa-86edb5a19a25/tasks?includeOutput=true",
+     "status": 200,
+     "ms": 25
+    },
+    {
+     "n": 91,
+     "user": "approver",
+     "method": "POST",
+     "path": "/api/v1/workflows/d1aadeb0-85f7-4f69-96fa-86edb5a19a25/approve",
+     "status": 200,
+     "ms": 385
+    },
+    {
+     "n": 92,
+     "user": "engineer",
+     "method": "POST",
+     "path": "/api/v1/workflows",
+     "status": 201,
+     "ms": 48
+    },
+    {
+     "n": 93,
+     "user": "engineer",
+     "method": "POST",
+     "path": "/api/v1/workflows/de07ecae-9864-44cb-8c04-59c3209d3bb7/execute",
+     "status": 200,
+     "ms": 967
+    },
+    {
+     "n": 94,
+     "user": "engineer",
+     "method": "POST",
+     "path": "/api/v1/workflows/de07ecae-9864-44cb-8c04-59c3209d3bb7/replan",
+     "status": 200,
+     "ms": 38
+    },
+    {
+     "n": 95,
+     "user": "approver",
+     "method": "POST",
+     "path": "/api/v1/workflows/de07ecae-9864-44cb-8c04-59c3209d3bb7/approve",
+     "status": 200,
+     "ms": 873
+    },
+    {
+     "n": 96,
+     "user": "engineer",
+     "method": "POST",
+     "path": "/api/v1/workflows",
+     "status": 400,
+     "ms": 335
+    },
+    {
+     "n": 97,
+     "user": "engineer",
+     "method": "POST",
+     "path": "/api/v1/workflows",
+     "status": 422,
+     "ms": 23
+    },
+    {
+     "n": 98,
+     "user": "engineer",
+     "method": "GET",
+     "path": "/api/v1/workflows/does-not-exist",
+     "status": 404,
+     "ms": 26
+    },
+    {
+     "n": 99,
+     "user": "engineer",
+     "method": "GET",
+     "path": "/api/v1/workflows/e6f684b0-f51c-4a35-8988-ca25b6f35e80/summary",
+     "status": 409,
+     "ms": 33
+    },
+    {
+     "n": 100,
+     "user": "engineer",
+     "method": "POST",
+     "path": "/api/v1/admin/fault-injection",
+     "status": 403,
+     "ms": 25
+    },
+    {
+     "n": 101,
+     "user": "engineer",
+     "method": "GET",
+     "path": "/api/v1/nothing-here",
+     "status": 404,
+     "ms": 58
+    },
+    {
+     "n": 102,
+     "user": "engineer",
+     "method": "GET",
+     "path": "/api/v1/workflows?page=0&size=5",
+     "status": 200,
+     "ms": 48
+    },
+    {
+     "n": 103,
+     "user": "engineer",
+     "method": "GET",
+     "path": "/api/v1/metrics/summary",
+     "status": 200,
+     "ms": 50
+    }
+   ]
+  },
+  {
+   "n": 46,
+   "section": "Run all flows from the browser",
+   "title": "Run all flows: complete list of checks",
+   "note": "Full list of checks (full-page capture).",
+   "caption": "Result of the full API run",
+   "file": "shots/46-run-all-flows-complete-list-of-checks.png",
+   "calls": []
+  }
+ ],
+ "runAll": {
+  "summary": {
+   "pass": 72,
+   "fail": 0,
+   "done": 72
+  },
+  "rows": [
+   {
+    "sec": true,
+    "pass": false,
+    "fail": false,
+    "text": "0. Health and identity"
+   },
+   {
+    "sec": false,
+    "pass": true,
+    "fail": false,
+    "text": "PASS health is UP"
+   },
+   {
+    "sec": false,
+    "pass": true,
+    "fail": false,
+    "text": "PASS approver can approve, cannot inject faults"
+   },
+   {
+    "sec": true,
+    "pass": false,
+    "fail": false,
+    "text": "1. URL shortener"
+   },
+   {
+    "sec": false,
+    "pass": true,
+    "fail": false,
+    "text": "PASS create -> 201 with 7-char code E0gbO6t"
+   },
+   {
+    "sec": false,
+    "pass": true,
+    "fail": false,
+    "text": "PASS custom alias + expiration -> 201"
+   },
+   {
+    "sec": false,
+    "pass": true,
+    "fail": false,
+    "text": "PASS duplicate alias -> 409"
+   },
+   {
+    "sec": false,
+    "pass": true,
+    "fail": false,
+    "text": "PASS javascript: URL -> 400"
+   },
+   {
+    "sec": false,
+    "pass": true,
+    "fail": false,
+    "text": "PASS private host -> 400"
+   },
+   {
+    "sec": false,
+    "pass": true,
+    "fail": false,
+    "text": "PASS past expiration -> 400"
+   },
+   {
+    "sec": false,
+    "pass": true,
+    "fail": false,
+    "text": "PASS create without login -> 401 (no browser login popup)"
+   },
+   {
+    "sec": false,
+    "pass": true,
+    "fail": false,
+    "text": "PASS redirect -> 302 (twice)"
+   },
+   {
+    "sec": false,
+    "pass": true,
+    "fail": false,
+    "text": "PASS analytics: 2 clicks, referrer, daily bucket, timestamps 2 clicks, referrer localhost"
+   },
+   {
+    "sec": false,
+    "pass": true,
+    "fail": false,
+    "text": "PASS list (paged)"
+   },
+   {
+    "sec": false,
+    "pass": true,
+    "fail": false,
+    "text": "PASS details: click count and status 2 clicks"
+   },
+   {
+    "sec": false,
+    "pass": true,
+    "fail": false,
+    "text": "PASS unknown code -> 404"
+   },
+   {
+    "sec": false,
+    "pass": true,
+    "fail": false,
+    "text": "PASS deactivate -> 204"
+   },
+   {
+    "sec": false,
+    "pass": true,
+    "fail": false,
+    "text": "PASS deactivated redirect -> 410"
+   },
+   {
+    "sec": false,
+    "pass": true,
+    "fail": false,
+    "text": "PASS reactivate -> 200, redirect 302 again"
+   },
+   {
+    "sec": false,
+    "pass": false,
+    "fail": false,
+    "text": "waiting 7 s for the 5-second link to expire..."
+   },
+   {
+    "sec": false,
+    "pass": true,
+    "fail": false,
+    "text": "PASS expired link -> 410"
+   },
+   {
+    "sec": true,
+    "pass": false,
+    "fail": false,
+    "text": "2. Scenario 1 - Greenfield (parallel branches, final approval)"
+   },
+   {
+    "sec": false,
+    "pass": true,
+    "fail": false,
+    "text": "PASS execute -> WAITING_FOR_APPROVAL (RELEASE_EXECUTION pending)"
+   },
+   {
+    "sec": false,
+    "pass": true,
+    "fail": false,
+    "text": "PASS conditional gates skipped"
+   },
+   {
+    "sec": false,
+    "pass": true,
+    "fail": false,
+    "text": "PASS engineer cannot approve -> 403"
+   },
+   {
+    "sec": false,
+    "pass": true,
+    "fail": false,
+    "text": "PASS approver approves -> COMPLETED"
+   },
+   {
+    "sec": false,
+    "pass": true,
+    "fail": false,
+    "text": "PASS summary + release readiness READY_WITH_CONDITIONS"
+   },
+   {
+    "sec": false,
+    "pass": true,
+    "fail": false,
+    "text": "PASS artifacts all ACCEPTED"
+   },
+   {
+    "sec": false,
+    "pass": true,
+    "fail": false,
+    "text": "PASS decision lineage has parents"
+   },
+   {
+    "sec": false,
+    "pass": true,
+    "fail": false,
+    "text": "PASS approvals listed"
+   },
+   {
+    "sec": false,
+    "pass": true,
+    "fail": false,
+    "text": "PASS audit trail has events"
+   },
+   {
+    "sec": false,
+    "pass": true,
+    "fail": false,
+    "text": "PASS per-workflow metrics 10 agent executions"
+   },
+   {
+    "sec": true,
+    "pass": false,
+    "fail": false,
+    "text": "3. Scenario 2 - Brownfield"
+   },
+   {
+    "sec": false,
+    "pass": true,
+    "fail": false,
+    "text": "PASS BROWNFIELD waits for final approval"
+   },
+   {
+    "sec": false,
+    "pass": true,
+    "fail": false,
+    "text": "PASS change impact: APIs, entities, services, repositories, risks"
+   },
+   {
+    "sec": false,
+    "pass": true,
+    "fail": false,
+    "text": "PASS completes after approval"
+   },
+   {
+    "sec": true,
+    "pass": false,
+    "fail": false,
+    "text": "4. Scenario 3 - Ambiguous requirement (three approvals)"
+   },
+   {
+    "sec": false,
+    "pass": true,
+    "fail": false,
+    "text": "PASS pauses on MATERIAL_ASSUMPTIONS, no plan yet"
+   },
+   {
+    "sec": false,
+    "pass": true,
+    "fail": false,
+    "text": "PASS clarification questions + missing information 4 questions"
+   },
+   {
+    "sec": false,
+    "pass": true,
+    "fail": false,
+    "text": "PASS 2nd gate = design; test planning already done"
+   },
+   {
+    "sec": false,
+    "pass": true,
+    "fail": false,
+    "text": "PASS 3rd gate = RELEASE_EXECUTION"
+   },
+   {
+    "sec": false,
+    "pass": true,
+    "fail": false,
+    "text": "PASS completes; READY_WITH_CONDITIONS"
+   },
+   {
+    "sec": true,
+    "pass": false,
+    "fail": false,
+    "text": "5. Rejection -> rollback"
+   },
+   {
+    "sec": false,
+    "pass": true,
+    "fail": false,
+    "text": "PASS engineer cannot reject -> 403"
+   },
+   {
+    "sec": false,
+    "pass": true,
+    "fail": false,
+    "text": "PASS ROLLED_BACK, artifacts REVERTED"
+   },
+   {
+    "sec": false,
+    "pass": true,
+    "fail": false,
+    "text": "PASS rolled-back workflow cannot execute -> 409"
+   },
+   {
+    "sec": true,
+    "pass": false,
+    "fail": false,
+    "text": "6. Safe-stop on a security concern + gated resume"
+   },
+   {
+    "sec": false,
+    "pass": true,
+    "fail": false,
+    "text": "PASS SAFE_STOPPED / SECURITY_CONCERN Task 'security-review' failed: Critical review finding RV-3: The plan removes authentication or hard-codes credentials for admin endpoints"
+   },
+   {
+    "sec": false,
+    "pass": true,
+    "fail": false,
+    "text": "PASS engineer cannot resume -> 403"
+   },
+   {
+    "sec": false,
+    "pass": true,
+    "fail": false,
+    "text": "PASS approver without acknowledgement -> 400"
+   },
+   {
+    "sec": false,
+    "pass": true,
+    "fail": false,
+    "text": "PASS approver with acknowledgement resumes; violation stops it again"
+   },
+   {
+    "sec": true,
+    "pass": false,
+    "fail": false,
+    "text": "7. Retry with exponential backoff"
+   },
+   {
+    "sec": false,
+    "pass": true,
+    "fail": false,
+    "text": "PASS planning needed 3 attempts"
+   },
+   {
+    "sec": false,
+    "pass": true,
+    "fail": false,
+    "text": "PASS 2 retries audited with backoff 200 then 400 ms"
+   },
+   {
+    "sec": true,
+    "pass": false,
+    "fail": false,
+    "text": "8. Fallback provider"
+   },
+   {
+    "sec": false,
+    "pass": true,
+    "fail": false,
+    "text": "PASS fallback used, output degraded mock-llm-fallback"
+   },
+   {
+    "sec": true,
+    "pass": false,
+    "fail": false,
+    "text": "9. Retries exhausted -> safe-stop -> human resume"
+   },
+   {
+    "sec": false,
+    "pass": true,
+    "fail": false,
+    "text": "PASS SAFE_STOPPED / MAX_RETRIES_EXCEEDED"
+   },
+   {
+    "sec": false,
+    "pass": true,
+    "fail": false,
+    "text": "PASS resumed -> WAITING, then COMPLETED"
+   },
+   {
+    "sec": true,
+    "pass": false,
+    "fail": false,
+    "text": "10. Validation failure (no retry) and secret leak"
+   },
+   {
+    "sec": false,
+    "pass": true,
+    "fail": false,
+    "text": "PASS FAILED, 1 attempt, VALIDATION"
+   },
+   {
+    "sec": false,
+    "pass": true,
+    "fail": false,
+    "text": "PASS credential in output -> SAFE_STOPPED, never stored"
+   },
+   {
+    "sec": true,
+    "pass": false,
+    "fail": false,
+    "text": "11. Operator stop / resume / cancel"
+   },
+   {
+    "sec": false,
+    "pass": true,
+    "fail": false,
+    "text": "PASS stop -> SAFE_STOPPED / OPERATOR_REQUEST"
+   },
+   {
+    "sec": false,
+    "pass": true,
+    "fail": false,
+    "text": "PASS approver resumes -> WAITING; approve -> COMPLETED"
+   },
+   {
+    "sec": false,
+    "pass": true,
+    "fail": false,
+    "text": "PASS cancel -> CANCELLED, then execute 409"
+   },
+   {
+    "sec": true,
+    "pass": false,
+    "fail": false,
+    "text": "12. Dynamic replanning"
+   },
+   {
+    "sec": false,
+    "pass": true,
+    "fail": false,
+    "text": "PASS unknown task -> 400"
+   },
+   {
+    "sec": false,
+    "pass": true,
+    "fail": false,
+    "text": "PASS cyclic dependency -> 422"
+   },
+   {
+    "sec": false,
+    "pass": true,
+    "fail": false,
+    "text": "PASS low impact applied immediately; unaffected work preserved"
+   },
+   {
+    "sec": false,
+    "pass": true,
+    "fail": false,
+    "text": "PASS re-executes only stale tasks (documentation revision 2)"
+   },
+   {
+    "sec": false,
+    "pass": true,
+    "fail": false,
+    "text": "PASS high impact needs approval; nothing changed yet"
+   },
+   {
+    "sec": false,
+    "pass": true,
+    "fail": false,
+    "text": "PASS execute blocked while replan pending -> 409"
+   },
+   {
+    "sec": false,
+    "pass": true,
+    "fail": false,
+    "text": "PASS approved replan re-runs architecture (rev 2), keeps planning (rev 1)"
+   },
+   {
+    "sec": false,
+    "pass": true,
+    "fail": false,
+    "text": "PASS superseded decisions retained"
+   },
+   {
+    "sec": false,
+    "pass": true,
+    "fail": false,
+    "text": "PASS rejected replan discarded; plan untouched"
+   },
+   {
+    "sec": false,
+    "pass": true,
+    "fail": false,
+    "text": "PASS workflow still completes"
+   },
+   {
+    "sec": false,
+    "pass": true,
+    "fail": false,
+    "text": "PASS requirement change: version 2, re-classified BROWNFIELD"
+   },
+   {
+    "sec": true,
+    "pass": false,
+    "fail": false,
+    "text": "13. API validation, authorisation and error handling"
+   },
+   {
+    "sec": false,
+    "pass": true,
+    "fail": false,
+    "text": "PASS short requirement -> 400"
+   },
+   {
+    "sec": false,
+    "pass": true,
+    "fail": false,
+    "text": "PASS shell pattern -> 422 POLICY_VIOLATION"
+   },
+   {
+    "sec": false,
+    "pass": true,
+    "fail": false,
+    "text": "PASS unknown workflow -> 404"
+   },
+   {
+    "sec": false,
+    "pass": true,
+    "fail": false,
+    "text": "PASS summary before completion -> 409"
+   },
+   {
+    "sec": false,
+    "pass": true,
+    "fail": false,
+    "text": "PASS engineer cannot inject faults -> 403 with explanation Forbidden: you are signed in as engineer [ROLE_ENGINEER]. Approve/reject and resuming a safe-stopped workflow need the APPROVER role (user approver); fault injection needs ADMIN (user admin). Check GET /api/v1/whoami."
+   },
+   {
+    "sec": false,
+    "pass": true,
+    "fail": false,
+    "text": "PASS unknown path -> 404"
+   },
+   {
+    "sec": false,
+    "pass": true,
+    "fail": false,
+    "text": "PASS workflow list (paged)"
+   },
+   {
+    "sec": true,
+    "pass": false,
+    "fail": false,
+    "text": "14. Observability"
+   },
+   {
+    "sec": false,
+    "pass": true,
+    "fail": false,
+    "text": "PASS metrics: totals, rates, retries, rollbacks, safe-stops, MTTR, definitions 20 workflows, success 60.0%, retries 12"
+   }
+  ]
+ }
+}

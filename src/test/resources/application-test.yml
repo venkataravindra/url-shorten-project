@@ -1,0 +1,23 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:agentictest;DB_CLOSE_DELAY=-1
+  h2:
+    console:
+      enabled: false
+agentic:
+  orchestration:
+    parallelism: 3
+  retry:
+    max-retries: 3
+    initial-backoff-ms: 1
+    multiplier: 2.0
+    max-backoff-ms: 5
+    fallback-enabled: true
+  llm:
+    mock:
+      delay-ms: 25
+  workspace:
+    root: target/test-workspace
+logging:
+  level:
+    com.example.agentic: WARN

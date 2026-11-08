@@ -1,0 +1,20 @@
+target/
+data/
+workspace/
+*.log
+.idea/
+*.iml
+
+# local artifacts that should not be published
+agentic-url-shortener-project.zip
+/200
+/201
+/204
+/400
+/401
+/409
+/410
+/HTTP
+node_modules/
+*.out.log
+*.err.log
